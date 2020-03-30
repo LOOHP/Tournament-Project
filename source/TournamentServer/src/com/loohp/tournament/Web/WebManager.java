@@ -29,6 +29,9 @@ public class WebManager {
 		
 		String fileName = "jquery-1.11.3.min.js";
         File file = new File(WebFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
         try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
@@ -37,6 +40,9 @@ public class WebManager {
         
         fileName = "jquery.bracket.min.js";
         file = new File(WebFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
         try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
@@ -45,6 +51,9 @@ public class WebManager {
         
         fileName = "jquery.bracket.min.css";
         file = new File(WebFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
         try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
@@ -53,6 +62,9 @@ public class WebManager {
         
         fileName = "inactive.html";
         file = new File(TemplateFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
         try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
@@ -61,6 +73,9 @@ public class WebManager {
         
         fileName = "bracket.html";
         file = new File(TemplateFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
         try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
@@ -70,6 +85,9 @@ public class WebManager {
         fileName = "index.html";
         String resource = "inactive.html";
         file = new File(WebFolder, fileName);
+        if (file.exists()) {
+        	file.delete();
+        }
     	try (InputStream in = new FileInputStream(new File(TemplateFolder, resource))) {
             Files.copy(in, file.toPath());
         } catch (IOException e) {
