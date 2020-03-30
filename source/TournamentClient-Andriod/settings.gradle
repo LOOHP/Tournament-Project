@@ -1,0 +1,2 @@
+rootProject.name='TournamentClient'
+include ':app'
