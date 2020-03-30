@@ -13,6 +13,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class TournamentPackage {
 	
 	public static void main(String args[]) {	
@@ -51,6 +53,9 @@ public class TournamentPackage {
 	        	e.printStackTrace();
 	        }
 		}
+		
+		String str = "Files had been built and placed into the \"builds\" folder!";
+		JOptionPane.showMessageDialog(null, str);
 	}
 	
 	public static boolean downloadFile(File output, URL download) {
@@ -65,16 +70,13 @@ public class TournamentPackage {
 
 	        return true;
 	    }
-	    catch (FileNotFoundException e)
-	    {
+	    catch (FileNotFoundException e) {
 	        e.printStackTrace();
 	    }
-	    catch (MalformedURLException e)
-	    {
+	    catch (MalformedURLException e) {
 	        e.printStackTrace();
 	    }
-	    catch (IOException e)
-	    {
+	    catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	    return false;
