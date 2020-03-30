@@ -29,63 +29,51 @@ public class WebManager {
 		
 		String fileName = "jquery-1.11.3.min.js";
         File file = new File(WebFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         fileName = "jquery.bracket.min.js";
         file = new File(WebFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         fileName = "jquery.bracket.min.css";
         file = new File(WebFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         fileName = "inactive.html";
         file = new File(TemplateFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         fileName = "bracket.html";
         file = new File(TemplateFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream in = Tournament.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         fileName = "index.html";
         String resource = "inactive.html";
         file = new File(WebFolder, fileName);
-        if (!file.exists()) {
-        	try (InputStream in = new FileInputStream(new File(TemplateFolder, resource))) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    	try (InputStream in = new FileInputStream(new File(TemplateFolder, resource))) {
+            Files.copy(in, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 		
 		while (true) {
