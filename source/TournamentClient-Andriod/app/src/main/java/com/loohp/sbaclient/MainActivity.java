@@ -180,18 +180,27 @@ public class MainActivity<handler> extends AppCompatActivity {
     }
 
     public void onPromote(View view) {
+        if (promoteText.getText().toString().equals("")) {
+            return;
+        }
         String cmd = "promote " + promoteText.getText().toString();
         send(cmd);
         promoteText.setText("");
     }
 
     public void onDemote(View view) {
+        if (demoteText.getText().toString().equals("")) {
+            return;
+        }
         String cmd = "unpromote " + demoteText.getText().toString();
         send(cmd);
         demoteText.setText("");
     }
 
     public void onSendCmd(View view) {
+        if (cmdText.getText().toString().equals("")) {
+            return;
+        }
         String cmd = cmdText.getText().toString();
         if (!cmd.startsWith("function:")) {
             send(cmd);

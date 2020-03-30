@@ -107,6 +107,9 @@ public class GUI extends JFrame {
 		commandInput.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (commandInput.getText().equals("")) {
+					return;
+				}
 				if (e.getKeyCode() == 10) {
 					String cmd = commandInput.getText();
 					history.add(cmd);
@@ -196,6 +199,9 @@ public class GUI extends JFrame {
 		execCommand.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (commandInput.getText().equals("")) {
+					return;
+				}
 				String cmd = commandInput.getText();
 				history.add(cmd);
 				currenthistory = history.size();

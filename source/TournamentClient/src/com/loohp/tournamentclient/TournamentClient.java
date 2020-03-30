@@ -135,6 +135,9 @@ public class TournamentClient extends JFrame {
 		hostConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (hostInput.getText().equals("")) {
+					return;
+				}
 				String host = hostInput.getText();
 				int port = 1720;
 				if (hostInput.getText().contains(":")) {
@@ -175,6 +178,9 @@ public class TournamentClient extends JFrame {
 		commandInput.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (commandInput.getText().equals("")) {
+					return;
+				}
 				if (e.getKeyCode() == 10) {
 					String cmd = commandInput.getText();
 					history.add(cmd);
@@ -215,6 +221,9 @@ public class TournamentClient extends JFrame {
 		promoteButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (promoteText.getText().equals("")) {
+					return;
+				}
 				String cmd = "promote " + promoteText.getText();
 				Client.send(cmd);
 				promoteText.setText("");
@@ -234,6 +243,9 @@ public class TournamentClient extends JFrame {
 		promoteText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (promoteText.getText().equals("")) {
+					return;
+				}
 				if (e.getKeyCode() == 10) {
 					String cmd = "promote " + promoteText.getText();
 					Client.send(cmd);
@@ -255,6 +267,9 @@ public class TournamentClient extends JFrame {
 		demotebutton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (demoteText.getText().equals("")) {
+					return;
+				}
 				String cmd = "unpromote " + demoteText.getText();
 				Client.send(cmd);
 				demoteText.setText("");
@@ -274,6 +289,9 @@ public class TournamentClient extends JFrame {
 		demoteText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (demoteText.getText().equals("")) {
+					return;
+				}
 				if (e.getKeyCode() == 10) {
 					String cmd = "unpromote " + demoteText.getText();
 					Client.send(cmd);
@@ -295,6 +313,9 @@ public class TournamentClient extends JFrame {
 		findPlayerButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (findPlayerText.getText().equals("")) {
+					return;
+				}
 				String cmd = "find " + findPlayerText.getText();
 				Client.send(cmd);
 				findPlayerText.setText("");
@@ -313,6 +334,9 @@ public class TournamentClient extends JFrame {
 		findPlayerText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (findPlayerText.getText().equals("")) {
+					return;
+				}
 				if (e.getKeyCode() == 10) {
 					String cmd = "find " + findPlayerText.getText();
 					Client.send(cmd);
@@ -481,6 +505,9 @@ public class TournamentClient extends JFrame {
 		execCommand.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (commandInput.getText().equals("")) {
+					return;
+				}
 				String cmd = commandInput.getText();
 				Client.send(cmd);
 				commandInput.setText("");
