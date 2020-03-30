@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/jar_files (1)/snakeyaml-1.26.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/proguard6.2.2/proguard6.2.2/lib/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/json-simple-1.1.jar/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/commons-io-2.6-bin (1)/commons-io-2.6/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/jar_files (4)/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/jar_files (4)/javax.websocket-api-1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Downloads/jar_files (4)/jetty-all-9.2.24.v20180105.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
