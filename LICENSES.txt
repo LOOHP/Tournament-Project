@@ -12,6 +12,7 @@ TournamentServer:
 	- eclipse/jetty-all is dual licensed under the Apache License 2.0 and Eclipse Public License 1.0
 	- fangyidong/json-simple is licensed under the Apache License 2.0
 	- spariev/snakeyaml is licensed under the Apache License 2.0
+	- Teijo Laine/jQuery Bracket is licenced under the MIT licence
 
 TournamentClient:
 	- jgoodies-form is licensed under the BSD Open Source License
