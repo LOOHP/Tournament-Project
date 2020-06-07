@@ -16,3 +16,5 @@ TournamentServer:
 
 TournamentClient:
 	- jgoodies-form is licensed under the BSD Open Source License
+	- google/gson is licensed under the Apache License 2.0
+	- fangyidong/json-simple is licensed under the Apache License 2.0
