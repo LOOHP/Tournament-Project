@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/javax.websocket-api-1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/jetty-all-9.2.24.v20180105.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="D:/Users/LOOHP/Desktop 2/test/Tourney_dependencies/snakeyaml-1.26.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
