@@ -33,4 +33,4 @@ import <file/terminal> [-r (replace)]
 To connect to a tournament server through the client, simply enter the **host and the port (default: 1720)** and hit connect.
 
 ## Help command
-Simply by running `help` will list all the commands, entering each command (incorrectly) will display its usage.
+Simply by running `help` will list all the commands with its description, entering each command (incorrectly) will display its usage.
