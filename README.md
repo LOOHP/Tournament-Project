@@ -1,7 +1,7 @@
 # TournamentProject
 
 ## Getting started
-1. Download **Tournament.jar** from this repository
+1. Download [**Tournament.jar**](https://raw.githubusercontent.com/LOOHP/TournamentProject/master/Tournament.jar) from this repository
 2. Make sure you have at least Java 8 installed on your computer
 3. Run Tournament.jar (preferably in an empty folder)
 4. A folder named **builds** will be created, containing all the latest program files for the tournament program.
@@ -27,6 +27,21 @@ For the file input mode, players will be read from the file `configs/players.yml
 The commands are
 ```
 import <file/terminal> [-r (replace)]
+```
+## Start a competition
+Run the following command
+```
+start
+```
+
+## Exiting the program
+Closing the program incorrectly might cause data to not be saved, to properly safe all data before exit, use the following command:
+```
+exit
+```
+or
+```
+stop
 ```
 
 ## Using the tournament client
