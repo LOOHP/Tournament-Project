@@ -28,6 +28,7 @@ Common:
 Commands:
   Help:
     Header: "Avalible Commands"
+    Description: "Shows the help menu"
 
   Find:
     Usage: "Usage: find <player/UUID>"
@@ -37,6 +38,7 @@ Commands:
     ActiveMatch: "Active Match: %s"
     Match: "Match %s"
     AllMatches: "All Matches Involved: %s"
+    Description: "Show information about a player"
 
   Import:
     Usage: "Usage: import <file/terminal> [-r (replace)]"
@@ -54,35 +56,45 @@ Commands:
       Finishing: "Finishing up terminal player import!"
       Imported: "Imported %s player(s)"
       Total: "There are %s player(s) in total"
+    Description: "Import players into the player pool"
 
   List:
     Usage: "Usage: list <players/current/round> [players: --uuid]<round: roundnumber>"
     IntegerExpected: "Please input an integer"
+    Description: "List all players"
 
   Promote:
     Usage: "Usage: promote <player/UUID>"
     PlayerNotInAMatch: "Player is not in this round of the competition"
     Header: "Result of match %s"
+    Description: "Move a player from the current stage to the next stage"
 
   Unpromote:
     Usage: "Usage: unpromote <player/UUID>"
     PlayerNotInAMatch: "Player is not in this round of the competition"
     NotYetPromoted: "This player has not been promoted in this round yet"
     Done: "Undone promote action for player %s"
+    Description: "Undo a promotion"
 
   Report:
     Usage: "Usage: report [file]"
+    Description: "Generate a competition report of the current status"
 
   Restart:
     Usage: "Usage: restart"
     Confirmation: "Are you sure you want to OVERWRITE the current on going competition?" 
     Cancel: "Restart action cancelled"
+    Description: "Discard the current active competition and create a new one (Requires confirmation)"
 
   Start:
     Usage: "Usage: start"
     NotEnoughPlayers: "Insufficent amount of players"
     Begin: "Generating new competition.."
     Done: "Competition generation complete! %s"
+    Description: "Create a new competition"
+
+  Exit:
+    Description: "Save and exit the program"
 
 Server:
   Connect: "[%s] has connected"

@@ -1,10 +1,12 @@
 package com.loohp.tournamentpackage;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,55 +19,36 @@ import javax.swing.JOptionPane;
 
 public class TournamentPackage {
 	
-	public static void main(String args[]) {	
+	public static void main(String args[]) {
+		
+		boolean hasConsole = System.console() != null ? true : false;
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
 		File outFolder = new File("builds");
 		
-		String rooturl = "https://raw.githubusercontent.com/LOOHP/Tournament-Project/master/";
-		String buildsurl = rooturl + "builds/";
+		//String rooturl = "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/";
 		
-		List<String> list = new ArrayList<String>();
-		list.add("TournamentServer.jar");
-		list.add("TournamentClient.jar");
-		list.add("TournamentClient.apk");
+		List<Resource> list = new ArrayList<Resource>();
+		list.add(new Resource("TournamentServer.jar", "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/builds/TournamentServer.jar"));
+		list.add(new Resource("TournamentClient.jar", "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/builds/TournamentClient.jar"));
+		list.add(new Resource("TournamentClient.apk", "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/builds/TournamentClient.apk"));
+		list.add(new Resource("LICENSES.txt", "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/LICENSES.txt"));
+		list.add(new Resource("README.md", "https://raw.githubusercontent.com/LOOHP/TournamentProject/master/README.md"));
 		
-		String LICENSES = "LICENSES.txt";
-		
-		try {
-        	if (!outFolder.exists()) {
-        		outFolder.mkdir();
-        	}
-        	
-        	String link = rooturl + LICENSES;
-        	File output = new File(outFolder, LICENSES);
-        	
-        	if (!downloadFile(output, new URL(link))) {
-        		InputStream stream = TournamentPackage.class.getClassLoader().getResourceAsStream(LICENSES);
-	        	OutputStream resStreamOut = new FileOutputStream(output);	
-	            int readBytes;
-	            byte[] buffer = new byte[4096];
-	            while ((readBytes = stream.read(buffer)) > 0) {
-	                resStreamOut.write(buffer, 0, readBytes);
-	            }
-	            stream.close();
-	            resStreamOut.close();
-        	}
-        	
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-		
-		for (String resourceName : list) {
+		for (Resource resource : list) {
 			try {
 	        	if (!outFolder.exists()) {
 	        		outFolder.mkdir();
 	        	}
 	        	
-	        	String link = buildsurl + resourceName;
-	        	File output = new File(outFolder, resourceName);
+	        	File output = new File(outFolder, resource.getName());
 	        	
-	        	if (!downloadFile(output, new URL(link))) {
-	        		InputStream stream = TournamentPackage.class.getClassLoader().getResourceAsStream(resourceName);
+	        	if (hasConsole) {
+	        		System.out.println("Building " + resource.getName() + "\nFrom " + resource.getUrl() + "\nTo " + output.getAbsolutePath() + "\n...");
+	        	}
+	        	
+	        	if (!downloadFile(output, new URL(resource.getUrl()))) {
+	        		InputStream stream = TournamentPackage.class.getClassLoader().getResourceAsStream(resource.getName());
 		        	OutputStream resStreamOut = new FileOutputStream(output);	
 		            int readBytes;
 		            byte[] buffer = new byte[4096];
@@ -74,7 +57,15 @@ public class TournamentPackage {
 		            }
 		            stream.close();
 		            resStreamOut.close();
-	        	}
+		            
+		            if (hasConsole) {
+		        		System.out.println("Unable to connect to github, used internal " + resource.getName() + " instead!" + "\n");
+		        	}
+	        	} else {
+	        		if (hasConsole) {
+		        		System.out.println("Finished building " + resource.getName() + "\n");
+		        	}
+	        	}	   
 	        	
 	        } catch (Exception e) {
 	        	e.printStackTrace();
@@ -82,7 +73,19 @@ public class TournamentPackage {
 		}
 		
 		String str = "Files had been built and placed into the \"builds\" folder!";
-		JOptionPane.showMessageDialog(null, str);
+		if (hasConsole) {
+			System.out.println(str);
+			
+			System.out.println("Press [enter] to quit");
+			try {
+				in.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} else {
+			JOptionPane.showMessageDialog(null, str);
+		}
 		
 		System.exit(0);
 	}

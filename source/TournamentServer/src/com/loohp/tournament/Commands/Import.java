@@ -2,9 +2,11 @@ package com.loohp.tournament.Commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,6 +149,21 @@ public class Import {
 		IO.writeLn(Lang.getLang("Commands.Import.Terminal.Imported").replace("%s", addedPlayers.size() + ""));
 		TournamentServer.playerList.addAll(addedPlayers);
 		IO.writeLn(Lang.getLang("Commands.Import.Terminal.Total").replace("%s", TournamentServer.playerList.size() + ""));
+	}
+	
+	public static void initPlayersFile() {
+		String fileName = "players.yml";
+		DataFolder.mkdirs();
+        File file = new File(DataFolder, fileName);
+        if (!file.exists()) {
+        	IO.writeLn("Initial Start Detected, Creating players.yml");
+        	try (InputStream in = TournamentServer.class.getClassLoader().getResourceAsStream(fileName)) {
+                Files.copy(in, file.toPath());
+                IO.writeLn("Created players.yml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }           
 	}
 	
 }

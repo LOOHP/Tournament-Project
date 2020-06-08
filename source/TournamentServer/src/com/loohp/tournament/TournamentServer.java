@@ -4,10 +4,8 @@ import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -130,7 +128,7 @@ public class TournamentServer {
 		t2.start();
     	
 		IO.writeLn("Starting Tournament Server..");
-		loadProgram();
+		Import.initPlayersFile();
 		
 		IO.writeLn("Loading language..");
 		Lang.load();
@@ -184,7 +182,7 @@ public class TournamentServer {
 		
 		try {TimeUnit.MILLISECONDS.sleep(500);} catch (InterruptedException e) {}
 		
-		do {
+		while (true) {
 			System.setOut(stdout);
 			
 			try {TimeUnit.MILLISECONDS.sleep(50);} catch (InterruptedException e) {}
@@ -225,38 +223,34 @@ public class TournamentServer {
 					Find.findPlayer(inp);
 					
 				} else if (inp[0].equalsIgnoreCase("help")) {
+					IO.writeLn("");
 					IO.writeLn(Lang.getLang("Commands.Help.Header"));
-					IO.writeLn(">> import");
-					IO.writeLn(">> list");
-					IO.writeLn(">> start");
-					IO.writeLn(">> restart");
-					IO.writeLn(">> promote");
-					IO.writeLn(">> unpromote");
-					IO.writeLn(">> find");
-					IO.writeLn(">> exit");
-					IO.writeLn(">> help");
+					IO.writeF("    %-15s    ", "import");
+					IO.writeLn(Lang.getLang("Commands.Import.Description"));
+					IO.writeF("    %-15s    ", "list");
+					IO.writeLn(Lang.getLang("Commands.List.Description"));
+					IO.writeF("    %-15s    ", "start");
+					IO.writeLn(Lang.getLang("Commands.Start.Description"));
+					IO.writeF("    %-15s    ", "restart");
+					IO.writeLn(Lang.getLang("Commands.Restart.Description"));
+					IO.writeF("    %-15s    ", "promote");
+					IO.writeLn(Lang.getLang("Commands.Promote.Description"));
+					IO.writeF("    %-15s    ", "unpromote");
+					IO.writeLn(Lang.getLang("Commands.Unpromote.Description"));
+					IO.writeF("    %-15s    ", "find");
+					IO.writeLn(Lang.getLang("Commands.Find.Description"));
+					IO.writeF("    %-15s    ", "report");
+					IO.writeLn(Lang.getLang("Commands.Report.Description"));
+					IO.writeF("    %-15s    ", "exit");
+					IO.writeLn(Lang.getLang("Commands.Exit.Description"));
+					IO.writeF("    %-15s    ", "help");
+					IO.writeLn(Lang.getLang("Commands.Help.Description"));
+					IO.writeLn("");
 					
 				} else if (!inp[0].equalsIgnoreCase("")) {
 					IO.writeLn(Lang.getLang("Common.UnknownCommand"));
 				}
-			}
-			
-			
-		} while (true);				
-	}
-	
-	public static void loadProgram() {
-		String fileName = "players.yml";
-		DataFolder.mkdirs();
-        File file = new File(DataFolder, fileName);
-        if (!file.exists()) {
-        	IO.writeLn("Initial Start Detected, Creating players.yml");
-        	try (InputStream in = TournamentServer.class.getClassLoader().getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-                IO.writeLn("Created players.yml");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }           
+			}						
+		}				
 	}
 }
