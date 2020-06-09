@@ -64,6 +64,7 @@ public class Start {
 		while (players.size() < total) {
 			players.add(new Player(UUID.randomUUID(), "_BYE_", "N/A", false));
 		}
+		
 		Collections.shuffle(players);
 		List<List<Player>> pairs = formPair(players);
 		
@@ -166,8 +167,8 @@ public class Start {
 	public static List<List<Player>> formPair(List<Player> players) {
 		List<List<Player>> list = new ArrayList<List<Player>>();
 		
-		List<Player> playersPod = new CopyOnWriteArrayList<Player>();
-		playersPod.addAll(players);
+		List<Player> playersPod = new CopyOnWriteArrayList<Player>(players);
+		
 		List<List<Player>> retu = split(playersPod);
 		for (List<Player> each : retu) {
 			if (each.size() > 2) {
@@ -181,8 +182,7 @@ public class Start {
 	
 	public static List<List<Player>> split(List<Player> players) {
 		
-		List<Player> playersPod = new ArrayList<Player>();
-		playersPod.addAll(players);
+		List<Player> playersPod = new ArrayList<Player>(players);
 		int max = players.size() / 2;
 		
 		List<Player> group1 = new ArrayList<Player>();
@@ -215,6 +215,15 @@ public class Start {
 
 		while (itr.hasNext()) {
 			Player player = itr.next();
+			if (group1.size() == max) {
+				group2.add(player);
+				itr.remove();
+				continue;
+			} else if (group2.size() == max) {
+				group1.add(player);
+				itr.remove();
+				continue;
+			}
 			if (player.getSeeded()) {
 				group1.add(player);
 				itr.remove();
