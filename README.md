@@ -26,7 +26,7 @@ There are two import modes
 - File
 - Terminal
 
-For the file input mode, players will be read from the file `configs/players.yml`, instructions on how to use the players.yml are printed as comments in file itself.
+For the file input mode, players will be read from the file `configs/players.yml`, instructions on how to use the players.yml are printed as comments in the file itself.
 ***
 The commands are
 ```
