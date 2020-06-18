@@ -27,6 +27,7 @@ import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.ClientFunctions.FunctionSendFinalReport;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
+import com.loohp.tournament.Web.WebManager;
 import com.loohp.tournament.Yaml.YamlOrder;
 
 public class Finish {
@@ -86,6 +87,10 @@ public class Finish {
 		}
 		for (Player player : top4) {
 			player.setSeeded(true);
+		}
+		
+		if (TournamentServer.loadWeb) {
+			WebManager.updateHtml(TournamentServer.activeCompetition.get());
 		}
 		TournamentServer.activeCompetition = Optional.empty();
 		

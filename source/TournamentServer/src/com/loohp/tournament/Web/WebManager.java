@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.loohp.tournament.TournamentServer;
@@ -23,6 +24,8 @@ public class WebManager {
 	
 	public static File WebFolder = Web.WebFolder;
 	public static File TemplateFolder = new File(Web.WebFolder.getPath() + "/template");
+	private static Optional<String> teamsCache = Optional.empty();
+	private static Optional<String> resultsCache = Optional.empty();
 	
 	public static void run() {
 		
@@ -97,53 +100,58 @@ public class WebManager {
         }
 		
 		while (true) {
-			if (!TournamentServer.activeCompetition.isPresent()) {
-				try {TimeUnit.MILLISECONDS.sleep(10);} catch (InterruptedException e) {}
-				continue;
-			}
-			Competition comp = TournamentServer.activeCompetition.get();
-			List<String> groupString = new ArrayList<String>();
-			for (Group group : comp.getRounds().get(0).getGroups()) {
-				String string = "[";
-				if (group.getHome().getName().equals("_BYE_")) {
-					string = string + "null";
-				} else {
-					string = string + "\"" + group.getHome().getName() + "\"";
-				}
-				string = string + ",";
-				if (group.getAway().getName().equals("_BYE_")) {
-					string = string + "null";
-				} else {
-					string = string + "\"" + group.getAway().getName() + "\"";
-				}
-				string = string + "]";
-				groupString.add(string);
-			}
-			String teams = String.join(",", groupString);
+			if (TournamentServer.activeCompetition.isPresent()) {
+				updateHtml(TournamentServer.activeCompetition.get());
+			}			
 			
-			List<String> eachRound = new ArrayList<String>();
-			for (Round round : comp.getRounds()) {
-				List<String> eachGroup = new ArrayList<String>();
-				for (Group group : round.getGroups()) {
-					String string = "";
-					if (!group.getWinner().isPresent()) {
-						string = "[null, null]";
-					} else if (group.getWinner().get().equals(group.getHome())) {
-						string = "[1, 0]";
-					} else if (group.getWinner().get().equals(group.getAway())) {
-						string = "[0, 1]";
-					}
-					eachGroup.add(string);
-				}
-				String roundString = "[" + String.join(",", eachGroup) + "]";
-				eachRound.add(roundString);
+        	try {TimeUnit.SECONDS.sleep(2);} catch (InterruptedException e) {}
+		}
+	}
+	
+	public synchronized static void updateHtml(Competition comp) {
+		List<String> groupString = new ArrayList<String>();
+		for (Group group : comp.getRounds().get(0).getGroups()) {
+			String string = "[";
+			if (group.getHome().getName().equals("_BYE_")) {
+				string = string + "null";
+			} else {
+				string = string + "\"" + group.getHome().getName() + "\"";
 			}
-			String results = String.join(",", eachRound);
-			
-			fileName = "index.html";
-	        resource = "bracket.html";
+			string = string + ",";
+			if (group.getAway().getName().equals("_BYE_")) {
+				string = string + "null";
+			} else {
+				string = string + "\"" + group.getAway().getName() + "\"";
+			}
+			string = string + "]";
+			groupString.add(string);
+		}
+		String teams = String.join(",", groupString);
+		
+		List<String> eachRound = new ArrayList<String>();
+		for (Round round : comp.getRounds()) {
+			List<String> eachGroup = new ArrayList<String>();
+			for (Group group : round.getGroups()) {
+				String string = "";
+				if (!group.getWinner().isPresent()) {
+					string = "[null, null]";
+				} else if (group.getWinner().get().equals(group.getHome())) {
+					string = "[1, 0]";
+				} else if (group.getWinner().get().equals(group.getAway())) {
+					string = "[0, 1]";
+				}
+				eachGroup.add(string);
+			}
+			String roundString = "[" + String.join(",", eachGroup) + "]";
+			eachRound.add(roundString);
+		}
+		String results = String.join(",", eachRound);
+		
+		if ((!teamsCache.isPresent() || !teamsCache.get().equals(teams)) || (!resultsCache.isPresent() || !resultsCache.get().equals(results))) {			
+			String fileName = "index.html";
+			String resource = "bracket.html";
 	        File resourceFile = new File(TemplateFolder, resource);
-	        file = new File(WebFolder, fileName);
+	        File file = new File(WebFolder, fileName);
         	try {
         		BufferedReader br = new BufferedReader(new FileReader(resourceFile));
         		String line;
@@ -161,8 +169,10 @@ public class WebManager {
     			e.printStackTrace(new PrintWriter(errors));
     			IO.writeLn(errors.toString());
             }
-        	try {TimeUnit.MILLISECONDS.sleep(10);} catch (InterruptedException e) {}
 		}
+		
+		teamsCache = Optional.of(teams);
+		resultsCache = Optional.of(results);
 	}
 
 }
