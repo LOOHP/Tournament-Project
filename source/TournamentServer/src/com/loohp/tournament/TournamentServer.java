@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,10 @@ public class TournamentServer {
 	public static int webPort = 8080;
 	
 	public static void main(String args[]) {
+		
+		long startunixtime = System.currentTimeMillis();		
+		in = new BufferedReader(new InputStreamReader(System.in));
+		stdout = System.out;
 		
 		if (args.length > 0) {	
 			for (String flag : args) {
@@ -99,12 +104,6 @@ public class TournamentServer {
 		if (GraphicsEnvironment.isHeadless()) {
 			GUIrunning = false;
 		}
-		
-		long startunixtime = System.currentTimeMillis();
-		
-		in =  new BufferedReader(new InputStreamReader(System.in));
-		
-		stdout = System.out;
 		
 		if (GUIrunning) {
 			System.out.println("Launching Server GUI.. Add \"--nogui\" in launch arguments to disable");
@@ -192,35 +191,71 @@ public class TournamentServer {
 			
 			if (inp.length > 0) {				
 				if (inp[0].equalsIgnoreCase("exit") || inp[0].equalsIgnoreCase("stop")) {
-					Exit.exit();
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Exit.Usage"));
+					} else {
+						Exit.exit();
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("import")) {
-					Import.onImport(inp);
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Import.Usage"));
+					} else {
+						Import.onImport(inp);
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("list")) {
-					ListPlayer.listPlayers(inp);
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.List.Usage"));
+					} else {
+						ListPlayer.listPlayers(inp);
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("start")) {
-					Start.startCompetition();
-					RoundCheck.check();
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Start.Usage"));
+					} else {
+						Start.startCompetition();
+						RoundCheck.check();
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("promote")) {
-					Promotion.promote(inp);
-					RoundCheck.check();
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Promote.Usage"));
+					} else {
+						Promotion.promote(inp);
+						RoundCheck.check();
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("restart")) {
-					Restart.restart(inp);
-					RoundCheck.check();
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Restart.Usage"));
+					} else {
+						Restart.restart(inp);
+						RoundCheck.check();
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("unpromote") || inp[0].toLowerCase().equalsIgnoreCase("demote")) {
-					Unpromote.undo(inp);
-					RoundCheck.check();
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Unpromote.Usage"));
+					} else {
+						Unpromote.undo(inp);
+						RoundCheck.check();
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("report")) {
-					Report.generate(inp);
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Report.Usage"));
+					} else {
+						Report.generate(inp);
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("find")) {
-					Find.findPlayer(inp);
+					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+						IO.writeLn(Lang.getLang("Commands.Find.Usage"));
+					} else {
+						Find.findPlayer(inp);
+					}
 					
 				} else if (inp[0].equalsIgnoreCase("help")) {
 					IO.writeLn("");

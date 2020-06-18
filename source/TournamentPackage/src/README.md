@@ -26,13 +26,13 @@ There are two import modes
 - File
 - Terminal
 
-For the file input mode, players will be read from the file `configs/players.yml`, instructions on how to use the players.yml are printed as comments in file itself.
+For the file input mode, players will be read from the file `configs/players.yml`, instructions on how to use the players.yml are printed as comments in the file itself.
 ***
 The commands are
 ```
 import <file/terminal> [-r (replace)]
 ```
-## Start a competition
+## Starting a competition
 Run the following command
 ```
 start
@@ -51,5 +51,5 @@ stop
 ## Using the tournament client
 To connect to a tournament server through the client, simply enter the **host and the port (default: 1720)** and hit connect.
 
-## Help command
-Simply by running `help` will list all the commands with its description, entering each command (incorrectly) will display its usage.
+## Using the help command
+Simply by running `help` will list all the commands with its description, entering each command with the flag `--help` or incorrectly will display its usage.

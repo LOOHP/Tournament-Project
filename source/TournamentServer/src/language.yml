@@ -94,6 +94,7 @@ Commands:
     Description: "Create a new competition"
 
   Exit:
+    Usage: "Usage: exit"
     Description: "Save and exit the program"
 
 Server:

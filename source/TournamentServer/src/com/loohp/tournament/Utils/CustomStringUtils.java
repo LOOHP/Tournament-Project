@@ -1,23 +1,13 @@
 package com.loohp.tournament.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CustomStringUtils {
 	
 	public static boolean arrayContains(String compare, String[] args, boolean IgnoreCase) {
-		for (String string : args) {
-			if (IgnoreCase == false) {
-				if (string.equals(compare)) {
-					return true;
-				}
-			} else {
-				if (string.equalsIgnoreCase(compare)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return IgnoreCase ? Arrays.asList(args).stream().anyMatch(each -> each.equalsIgnoreCase(compare)) : Arrays.asList(args).stream().anyMatch(each -> each.equals(compare));
 	}
 	
 	public static boolean arrayContains(String compare, String[] args) {
