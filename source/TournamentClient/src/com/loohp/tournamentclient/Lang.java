@@ -21,7 +21,7 @@ public class Lang {
 		if (((HashMap<String, String>) CustomHashMapUtils.deserialize(hash)).containsKey("Title")) {
 			Window window = SwingUtilities.getWindowAncestor(TournamentClient.hostLabel);
 			JFrame frame = (JFrame) window;
-			frame.setTitle(((HashMap<String, String>) CustomHashMapUtils.deserialize(hash)).get("Title").replace("%s", Client.socket.getInetAddress().getHostAddress()));
+			frame.setTitle(((HashMap<String, String>) CustomHashMapUtils.deserialize(hash)).get("Title").replace("%s", Client.host));
 		}
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to load language pack provided by the server?");
