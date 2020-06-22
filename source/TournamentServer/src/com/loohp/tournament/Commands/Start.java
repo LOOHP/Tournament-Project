@@ -16,6 +16,7 @@ import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
 import com.loohp.tournament.Utils.IO;
+import com.loohp.tournament.Utils.StartFormRoundBundle;
 
 public class Start {
 	
@@ -96,11 +97,9 @@ public class Start {
 			}
 		}
 		
-		List<Object> obj = formRounds(pairs, roundNum);
-		@SuppressWarnings("unchecked")
-		List<Round> rounds = (List<Round>) obj.get(0);
-		@SuppressWarnings("unchecked")
-		List<Group> groups = (List<Group>) obj.get(1);
+		StartFormRoundBundle bundle = formRounds(pairs, roundNum);
+		List<Round> rounds = bundle.getRounds();
+		List<Group> groups = bundle.getGroups();
 		Competition comp = formCompetition(rounds, groups);
 		TournamentServer.activeCompetition = Optional.of(comp);
 		long end = System.currentTimeMillis();
@@ -113,7 +112,7 @@ public class Start {
 		return comp;
 	}
 	
-	public static List<Object> formRounds(List<List<Player>> players, int rounds) {
+	public static StartFormRoundBundle formRounds(List<List<Player>> players, int rounds) {
 		List<Group> list = new ArrayList<Group>();
 		List<Round> roundList = new ArrayList<Round>();
 		
@@ -158,10 +157,7 @@ public class Start {
 			}
 		}
 		
-		List<Object> returnlist = new ArrayList<Object>();
-		returnlist.add(roundList);
-		returnlist.add(list);
-		return returnlist;
+		return new StartFormRoundBundle(roundList, list);
 	}
 	
 	public static List<List<Player>> formPair(List<Player> players) {
