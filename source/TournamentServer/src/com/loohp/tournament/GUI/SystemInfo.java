@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import java.util.concurrent.TimeUnit;
 
 import com.loohp.tournament.TournamentServer;
-import com.sun.management.OperatingSystemMXBean;
 
 public class SystemInfo {
 	
@@ -13,7 +12,6 @@ public class SystemInfo {
 		if (TournamentServer.GUIrunning) {
 			while (true) {
 				Runtime runtime = Runtime.getRuntime();
-				OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
 				NumberFormat format = NumberFormat.getInstance();
 
@@ -28,14 +26,20 @@ public class SystemInfo {
 				sb.append("Memory Usage: " + format.format((allocatedMemory - freeMemory) / 1024 / 1024) + "/" + format.format(maxMemory / 1024 / 1024) + " MB (" + Math.round((double) (allocatedMemory - freeMemory) / (double) (maxMemory) * 100) + "%)\n");
 				sb.append("\n");
 
-				double processLoad = operatingSystemMXBean.getProcessCpuLoad();
-				double systemLoad = operatingSystemMXBean.getSystemCpuLoad();				
-				int processors = runtime.availableProcessors();
-				
-				sb.append("Available Processors: " + processors + "\n");
-				sb.append("Process CPU Load: " + Math.round(processLoad * 100) + "%\n");
-				sb.append("System CPU Load: " + Math.round(systemLoad * 100) + "%\n");
-				GUI.sysText.setText(sb.toString());
+				try {
+					@SuppressWarnings("restriction")
+					com.sun.management.OperatingSystemMXBean operatingSystemMXBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+					@SuppressWarnings("restriction")
+					double processLoad = operatingSystemMXBean.getProcessCpuLoad();
+					@SuppressWarnings("restriction")
+					double systemLoad = operatingSystemMXBean.getSystemCpuLoad();				
+					int processors = runtime.availableProcessors();
+					
+					sb.append("Available Processors: " + processors + "\n");
+					sb.append("Process CPU Load: " + Math.round(processLoad * 100) + "%\n");
+					sb.append("System CPU Load: " + Math.round(systemLoad * 100) + "%\n");
+					GUI.sysText.setText(sb.toString());
+				} catch (Exception ignore) {}
 				
 				try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {}
 			}
