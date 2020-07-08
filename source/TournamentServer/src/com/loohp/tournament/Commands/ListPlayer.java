@@ -48,13 +48,13 @@ public class ListPlayer {
 				if (CustomIntegerUtils.isInteger(args[2])) {
 					round(Integer.valueOf(args[2]));
 				} else {
-					IO.writeLn(Lang.getLang("List.IntegerExpected"));
+					IO.writeLn(Lang.getLang("Commands.List.IntegerExpected"));
 				}
 			}
 			return;
 		}
 		
-		Lang.getLang("List.Usage");
+		IO.writeLn(Lang.getLang("Commands.List.Usage"));
 	}
 	
 	public static void currentround() {
@@ -66,6 +66,13 @@ public class ListPlayer {
 			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));
 			return;
 		}
+		
+		int maxRounds = TournamentServer.activeCompetition.get().getRounds().size() - 1;
+		if (0 > round || maxRounds < round) {
+			IO.writeLn(Lang.getLang("Commands.List.RoundOutOfRange").replace("%s", maxRounds + ""));
+			return;
+		}
+		
 		IO.writeLn("===========================================================================================");
 		IO.writeF("|%-89s|", TournamentServer.activeCompetition.get().getRounds().get(round).getName());
 		IO.writeLn("");

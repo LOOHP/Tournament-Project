@@ -61,6 +61,7 @@ Commands:
   List:
     Usage: "Usage: list <players/current/round> [players: --uuid]<round: roundnumber>"
     IntegerExpected: "Please input an integer"
+    RoundOutOfRange: "The round does not exists! (Must be between 0 and %s exclusively)"
     Description: "List all players"
 
   Promote:

@@ -82,12 +82,16 @@ public class Lang {
 	
 	@SuppressWarnings("unchecked")
 	public static String getLang(String key) {
-		String[] tree = key.split("\\.");
-		HashMap<String, Object> map = lang;
-		for (int i = 0; i < tree.length - 1; i++) {
-			map = (HashMap<String, Object>) map.get(tree[i]);
+		try {
+			String[] tree = key.split("\\.");
+			HashMap<String, Object> map = lang;
+			for (int i = 0; i < tree.length - 1; i++) {
+				map = (HashMap<String, Object>) map.get(tree[i]);
+			}
+			return (String) map.get(tree[tree.length - 1]);
+		} catch (Exception e) {
+			return "null";
 		}
-		return (String) map.get(tree[tree.length - 1]);
 	}
 
 }

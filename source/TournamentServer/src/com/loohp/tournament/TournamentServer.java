@@ -182,110 +182,114 @@ public class TournamentServer {
 		try {TimeUnit.MILLISECONDS.sleep(500);} catch (InterruptedException e) {}
 		
 		while (true) {
-			System.setOut(stdout);
-			
-			try {TimeUnit.MILLISECONDS.sleep(50);} catch (InterruptedException e) {}
-			IO.write("> ");
-			
-			String[] inp = IO.readLn();
-			
-			if (inp.length > 0) {				
-				if (inp[0].equalsIgnoreCase("exit") || inp[0].equalsIgnoreCase("stop")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Exit.Usage"));
-					} else {
-						Exit.exit();
+			try {
+				System.setOut(stdout);
+				
+				try {TimeUnit.MILLISECONDS.sleep(50);} catch (InterruptedException e) {}
+				IO.write("> ");
+				
+				String[] inp = IO.readLn();
+				
+				if (inp.length > 0) {				
+					if (inp[0].equalsIgnoreCase("exit") || inp[0].equalsIgnoreCase("stop")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Exit.Usage"));
+						} else {
+							Exit.exit();
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("import")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Import.Usage"));
+						} else {
+							Import.onImport(inp);
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("list")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.List.Usage"));
+						} else {
+							ListPlayer.listPlayers(inp);
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("start")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Start.Usage"));
+						} else {
+							Start.startCompetition();
+							RoundCheck.check();
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("promote")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Promote.Usage"));
+						} else {
+							Promotion.promote(inp);
+							RoundCheck.check();
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("restart")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Restart.Usage"));
+						} else {
+							Restart.restart(inp);
+							RoundCheck.check();
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("unpromote") || inp[0].toLowerCase().equalsIgnoreCase("demote")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Unpromote.Usage"));
+						} else {
+							Unpromote.undo(inp);
+							RoundCheck.check();
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("report")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Report.Usage"));
+						} else {
+							Report.generate(inp);
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("find")) {
+						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+							IO.writeLn(Lang.getLang("Commands.Find.Usage"));
+						} else {
+							Find.findPlayer(inp);
+						}
+						
+					} else if (inp[0].equalsIgnoreCase("help")) {
+						IO.writeLn("");
+						IO.writeLn(Lang.getLang("Commands.Help.Header"));
+						IO.writeF("    %-15s    ", "import");
+						IO.writeLn(Lang.getLang("Commands.Import.Description"));
+						IO.writeF("    %-15s    ", "list");
+						IO.writeLn(Lang.getLang("Commands.List.Description"));
+						IO.writeF("    %-15s    ", "start");
+						IO.writeLn(Lang.getLang("Commands.Start.Description"));
+						IO.writeF("    %-15s    ", "restart");
+						IO.writeLn(Lang.getLang("Commands.Restart.Description"));
+						IO.writeF("    %-15s    ", "promote");
+						IO.writeLn(Lang.getLang("Commands.Promote.Description"));
+						IO.writeF("    %-15s    ", "unpromote");
+						IO.writeLn(Lang.getLang("Commands.Unpromote.Description"));
+						IO.writeF("    %-15s    ", "find");
+						IO.writeLn(Lang.getLang("Commands.Find.Description"));
+						IO.writeF("    %-15s    ", "report");
+						IO.writeLn(Lang.getLang("Commands.Report.Description"));
+						IO.writeF("    %-15s    ", "exit");
+						IO.writeLn(Lang.getLang("Commands.Exit.Description"));
+						IO.writeF("    %-15s    ", "help");
+						IO.writeLn(Lang.getLang("Commands.Help.Description"));
+						IO.writeLn("");
+						
+					} else if (!inp[0].equalsIgnoreCase("")) {
+						IO.writeLn(Lang.getLang("Common.UnknownCommand"));
 					}
-					
-				} else if (inp[0].equalsIgnoreCase("import")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Import.Usage"));
-					} else {
-						Import.onImport(inp);
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("list")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.List.Usage"));
-					} else {
-						ListPlayer.listPlayers(inp);
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("start")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Start.Usage"));
-					} else {
-						Start.startCompetition();
-						RoundCheck.check();
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("promote")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Promote.Usage"));
-					} else {
-						Promotion.promote(inp);
-						RoundCheck.check();
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("restart")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Restart.Usage"));
-					} else {
-						Restart.restart(inp);
-						RoundCheck.check();
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("unpromote") || inp[0].toLowerCase().equalsIgnoreCase("demote")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Unpromote.Usage"));
-					} else {
-						Unpromote.undo(inp);
-						RoundCheck.check();
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("report")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Report.Usage"));
-					} else {
-						Report.generate(inp);
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("find")) {
-					if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-						IO.writeLn(Lang.getLang("Commands.Find.Usage"));
-					} else {
-						Find.findPlayer(inp);
-					}
-					
-				} else if (inp[0].equalsIgnoreCase("help")) {
-					IO.writeLn("");
-					IO.writeLn(Lang.getLang("Commands.Help.Header"));
-					IO.writeF("    %-15s    ", "import");
-					IO.writeLn(Lang.getLang("Commands.Import.Description"));
-					IO.writeF("    %-15s    ", "list");
-					IO.writeLn(Lang.getLang("Commands.List.Description"));
-					IO.writeF("    %-15s    ", "start");
-					IO.writeLn(Lang.getLang("Commands.Start.Description"));
-					IO.writeF("    %-15s    ", "restart");
-					IO.writeLn(Lang.getLang("Commands.Restart.Description"));
-					IO.writeF("    %-15s    ", "promote");
-					IO.writeLn(Lang.getLang("Commands.Promote.Description"));
-					IO.writeF("    %-15s    ", "unpromote");
-					IO.writeLn(Lang.getLang("Commands.Unpromote.Description"));
-					IO.writeF("    %-15s    ", "find");
-					IO.writeLn(Lang.getLang("Commands.Find.Description"));
-					IO.writeF("    %-15s    ", "report");
-					IO.writeLn(Lang.getLang("Commands.Report.Description"));
-					IO.writeF("    %-15s    ", "exit");
-					IO.writeLn(Lang.getLang("Commands.Exit.Description"));
-					IO.writeF("    %-15s    ", "help");
-					IO.writeLn(Lang.getLang("Commands.Help.Description"));
-					IO.writeLn("");
-					
-				} else if (!inp[0].equalsIgnoreCase("")) {
-					IO.writeLn(Lang.getLang("Common.UnknownCommand"));
 				}
-			}						
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}				
 	}
 }
