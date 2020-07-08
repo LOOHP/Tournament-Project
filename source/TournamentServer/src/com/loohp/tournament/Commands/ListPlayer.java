@@ -6,7 +6,6 @@ import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
-import com.loohp.tournament.Utils.CustomIntegerUtils;
 import com.loohp.tournament.Utils.CustomStringUtils;
 import com.loohp.tournament.Utils.GroupUtils;
 import com.loohp.tournament.Utils.IO;
@@ -45,9 +44,11 @@ public class ListPlayer {
 			if (args.length < 3) {
 				currentround();
 			} else {
-				if (CustomIntegerUtils.isInteger(args[2])) {
-					round(Integer.valueOf(args[2]));
-				} else {
+				int round = 0;
+				try {
+					round = Integer.valueOf(args[2]);
+					round(round);
+				} catch (NumberFormatException e) {
 					IO.writeLn(Lang.getLang("Commands.List.IntegerExpected"));
 				}
 			}
