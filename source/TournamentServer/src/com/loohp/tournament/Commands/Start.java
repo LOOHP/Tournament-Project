@@ -2,6 +2,7 @@
 package com.loohp.tournament.Commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -9,33 +10,33 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Competition.Competition;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
 import com.loohp.tournament.Utils.IO;
+import com.loohp.tournament.Utils.RoundCheck;
 import com.loohp.tournament.Utils.StartFormRoundBundle;
 
-public class Start {
+public class Start implements CommandExecutor {
 	
-	public static void startCompetition() {
+	public void startCompetition() {
 		
-		if (TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionAlreadyRunning"));
+		if (TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionAlreadyRunning"));
 			return;
 		}
 		
-		if (TournamentServer.playerList.size() <= 1) {
-			IO.writeLn(Lang.getLang("Commands.Start.NotEnoughPlayers"));
+		if (TournamentServer.getInstance().getPlayerList().size() <= 1) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.NotEnoughPlayers"));
 			return;
-		} else if (TournamentServer.playerList.size() <= 2) {
-			IO.writeLn(Lang.getLang("Commands.Start.Begin"));
+		} else if (TournamentServer.getInstance().getPlayerList().size() <= 2) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.Begin"));
 			long start = System.currentTimeMillis();
 			
 			List<Group> groups = new ArrayList<Group>();
-			Group group = new Group(TournamentServer.playerList.get(0), TournamentServer.playerList.get(1), Optional.empty(), Optional.empty(), Optional.empty(), null);
+			Group group = new Group(TournamentServer.getInstance().getPlayerList().get(0), TournamentServer.getInstance().getPlayerList().get(1), Optional.empty(), Optional.empty(), Optional.empty(), null);
 			groups.add(group);
 			
 			List<Round> rounds = new ArrayList<Round>();
@@ -45,17 +46,17 @@ public class Start {
 			group.setRound(round);
 			
 			Competition comp = formCompetition(rounds, groups);
-			TournamentServer.activeCompetition = Optional.of(comp);
+			TournamentServer.getInstance().setActiveCompetition(comp);
 			
 			long end = System.currentTimeMillis();
-			IO.writeLn(Lang.getLang("Commands.Start.Done").replace("%s", "(" + (end - start) + "ms)"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.Done").replace("%s", "(" + (end - start) + "ms)"));
 			return;
 		}
 		
-		IO.writeLn(Lang.getLang("Commands.Start.Begin"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.Begin"));
 		long start = System.currentTimeMillis();
 		
-		List<Player> players = new ArrayList<Player>(TournamentServer.playerList);
+		List<Player> players = new ArrayList<Player>(TournamentServer.getInstance().getPlayerList());
 		long total = 0;
 		int roundNum = 0;
 		for (int i = 1; total < players.size(); i++) {
@@ -101,18 +102,18 @@ public class Start {
 		List<Round> rounds = bundle.getRounds();
 		List<Group> groups = bundle.getGroups();
 		Competition comp = formCompetition(rounds, groups);
-		TournamentServer.activeCompetition = Optional.of(comp);
+		TournamentServer.getInstance().setActiveCompetition(comp);
 		long end = System.currentTimeMillis();
 		
-		IO.writeLn(Lang.getLang("Commands.Start.Done").replace("%s", "(" + (end - start) + "ms)"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.Done").replace("%s", "(" + (end - start) + "ms)"));
 	}
 	
-	public static Competition formCompetition(List<Round> round, List<Group> group) {
+	public Competition formCompetition(List<Round> round, List<Group> group) {
 		Competition comp = new Competition(round, group, 0);
 		return comp;
 	}
 	
-	public static StartFormRoundBundle formRounds(List<List<Player>> players, int rounds) {
+	public StartFormRoundBundle formRounds(List<List<Player>> players, int rounds) {
 		List<Group> list = new ArrayList<Group>();
 		List<Round> roundList = new ArrayList<Round>();
 		
@@ -160,7 +161,7 @@ public class Start {
 		return new StartFormRoundBundle(roundList, list);
 	}
 	
-	public static List<List<Player>> formPair(List<Player> players) {
+	public List<List<Player>> formPair(List<Player> players) {
 		List<List<Player>> list = new ArrayList<List<Player>>();
 		
 		List<Player> playersPod = new CopyOnWriteArrayList<Player>(players);
@@ -286,6 +287,19 @@ public class Start {
 		list.add(group1);
 		list.add(group2);
 		return list;
+	}
+
+	@Override
+	public void execute(String[] args) {
+		if (args[0].equalsIgnoreCase("start")) {
+			if (Arrays.asList(args).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+				IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Start.Usage"));
+			} else {
+				startCompetition();
+				RoundCheck.check();
+			}
+			
+		}
 	}
 
 }

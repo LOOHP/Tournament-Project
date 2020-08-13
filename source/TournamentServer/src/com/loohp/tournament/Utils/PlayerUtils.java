@@ -44,7 +44,7 @@ public class PlayerUtils {
 	}
 	
 	public static Player getPlayer(String name) {
-		for (Player player : TournamentServer.playerList) {
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			if (player.getName().equalsIgnoreCase(name)) {
 				return player;
 			}
@@ -53,7 +53,7 @@ public class PlayerUtils {
 	}
 	
 	public static Player getPlayer(UUID uuid) {
-		for (Player player : TournamentServer.playerList) {
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			if (player.getId().equals(uuid)) {
 				return player;
 			}

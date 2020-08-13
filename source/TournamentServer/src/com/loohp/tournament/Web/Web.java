@@ -41,14 +41,13 @@ public class Web {
 	    try {
 	    	Server server = new Server();
 	        ServerConnector connector = new ServerConnector(server);
-	        connector.setPort(TournamentServer.webPort);
+	        connector.setPort(TournamentServer.getInstance().getWebPort());
 	        server.addConnector(connector);
 	        
 	        IO.writeLn("Tournament Chart Web Server listening on port " + connector.getPort());
 	
 	        URL file = WebFolder.toURI().toURL();
-	        if (file == null)
-	        {
+	        if (file == null) {
 	            throw new RuntimeException("Unable to find resource directory");
 	        }
 	

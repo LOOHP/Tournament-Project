@@ -100,8 +100,8 @@ public class WebManager {
         }
 		
 		while (true) {
-			if (TournamentServer.activeCompetition.isPresent()) {
-				updateHtml(TournamentServer.activeCompetition.get());
+			if (TournamentServer.getInstance().hasActiveCompetition()) {
+				updateHtml(TournamentServer.getInstance().getActiveCompetition());
 			}			
 			
         	try {TimeUnit.SECONDS.sleep(2);} catch (InterruptedException e) {}

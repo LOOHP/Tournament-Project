@@ -1,10 +1,10 @@
 package com.loohp.tournament.Commands;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
@@ -12,18 +12,19 @@ import com.loohp.tournament.Utils.Finish;
 import com.loohp.tournament.Utils.GroupUtils;
 import com.loohp.tournament.Utils.IO;
 import com.loohp.tournament.Utils.PlayerUtils;
+import com.loohp.tournament.Utils.RoundCheck;
 
-public class Promotion {
+public class Promotion implements CommandExecutor {
 	
-	public static void promote(String[] args) {
+	public void promote(String[] args) {
 		
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));
 			return;
 		}
 		
 		if (args.length < 2) {
-			IO.writeLn(Lang.getLang("Commands.Promote.Usage"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Promote.Usage"));
 			return;
 		}
 		
@@ -40,24 +41,24 @@ public class Promotion {
 			}
 		}
 		if (player == null) {
-			IO.writeLn(Lang.getLang("Common.PlayerNotFound"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.PlayerNotFound"));
 			return;
 		}
 			
-		Group group = PlayerUtils.getActiveRound(player, TournamentServer.activeCompetition.get());
+		Group group = PlayerUtils.getActiveRound(player, TournamentServer.getInstance().getActiveCompetition());
 		
 		if (group == null) {
-			IO.writeLn(Lang.getLang("Commands.Promote.PlayerNotInAMatch"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Promote.PlayerNotInAMatch"));
 			return;
 		}
 		
 		group.setWinner(Optional.of(player));
 		IO.writeLn("===========================================================================================");
-		String header = Lang.getLang("Commands.Promote.Header").replace("%s", GroupUtils.getMatchNumber(group) + "");
+		String header = TournamentServer.getInstance().getLang().get("Commands.Promote.Header").replace("%s", GroupUtils.getMatchNumber(group) + "");
 		IO.writeF("|%-89s|", header);
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+		IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
 		String home = "TBD";
@@ -91,6 +92,18 @@ public class Promotion {
 			nextGroup.setHome(player);
 		} else {
 			nextGroup.setAway(player);
+		}
+	}
+
+	@Override
+	public void execute(String[] args) {
+		if (args[0].equalsIgnoreCase("promote")) {
+			if (Arrays.asList(args).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+				IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Promote.Usage"));
+			} else {
+				promote(args);
+				RoundCheck.check();
+			}			
 		}
 	}
 

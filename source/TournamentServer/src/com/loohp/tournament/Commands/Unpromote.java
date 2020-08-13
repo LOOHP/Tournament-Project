@@ -1,27 +1,28 @@
 package com.loohp.tournament.Commands;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Utils.IO;
 import com.loohp.tournament.Utils.PlayerUtils;
+import com.loohp.tournament.Utils.RoundCheck;
 
-public class Unpromote {
+public class Unpromote implements CommandExecutor {
 	
-	public static void undo(String[] args) {
+	public void undo(String[] args) {
 		
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));
 			return;
 		}
 		
 		if (args.length < 2) {
-			IO.writeLn(Lang.getLang("Commands.Unpromote.Usage"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Unpromote.Usage"));
 			return;
 		}
 		
@@ -38,19 +39,19 @@ public class Unpromote {
 			}
 		}
 		if (player == null) {
-			IO.writeLn(Lang.getLang("Common.PlayerNotFound"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.PlayerNotFound"));
 			return;
 		}
 			
-		Group group = PlayerUtils.getActiveRound(player, TournamentServer.activeCompetition.get());
+		Group group = PlayerUtils.getActiveRound(player, TournamentServer.getInstance().getActiveCompetition());
 		
 		if (group == null) {
-			IO.writeLn(Lang.getLang("Commands.Unpromote.PlayerNotInAMatch"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Unpromote.PlayerNotInAMatch"));
 			return;
 		}
 		
 		if (!group.getWinner().isPresent()) {
-			IO.writeLn(Lang.getLang("Commands.Unpromote.NotYetPromoted"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Unpromote.NotYetPromoted"));
 			return;
 		}
 		group.setWinner(Optional.empty());
@@ -61,7 +62,20 @@ public class Unpromote {
 			group.getNextRoundGroup().get().setAway(null);
 		}
 		
-		IO.writeLn(Lang.getLang("Commands.Unpromote.Done").replace("%s", player.getName() + " (" + player.getId().toString() + ")"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Unpromote.Done").replace("%s", player.getName() + " (" + player.getId().toString() + ")"));
+	}
+
+	@Override
+	public void execute(String[] args) {
+		if (args[0].equalsIgnoreCase("unpromote") || args[0].toLowerCase().equalsIgnoreCase("demote")) {
+			if (Arrays.asList(args).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+				IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.Unpromote.Usage"));
+			} else {
+				undo(args);
+				RoundCheck.check();
+			}
+			
+		}
 	}
 
 }

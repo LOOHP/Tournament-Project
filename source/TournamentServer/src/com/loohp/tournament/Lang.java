@@ -15,13 +15,17 @@ import org.yaml.snakeyaml.Yaml;
 import com.loohp.tournament.Utils.IO;
 
 public class Lang {
-	
-	private static File DataFolder = TournamentServer.DataFolder;
-	private static HashMap<String, Object> lang = new HashMap<String, Object>();
-	public static HashMap<String, String> clientLang = new HashMap<String, String>();
+
+	private File DataFolder;
+	private HashMap<String, Object> lang;
+	private HashMap<String, String> clientLang;
 	
 	@SuppressWarnings("unchecked")
-	public static void load() {
+	public Lang(File dataFolder) {
+		DataFolder = dataFolder;
+		lang = new HashMap<>();
+		clientLang = new HashMap<>();
+		
 		String fileName = "language.yml";
 		DataFolder.mkdirs();
         File file = new File(DataFolder, fileName);
@@ -60,12 +64,12 @@ public class Lang {
 				}
 			}
 			
-			clientLang.put("Rounds.Final", getLang("Common.Rounds.Final"));
-			clientLang.put("Rounds.SemiFinal", getLang("Common.Rounds.SemiFinal"));
-			clientLang.put("Rounds.QuaterFinal", getLang("Common.Rounds.QuaterFinal"));
-			clientLang.put("Rounds.Others", getLang("Common.Rounds.Others"));
+			clientLang.put("Rounds.Final", get("Common.Rounds.Final"));
+			clientLang.put("Rounds.SemiFinal", get("Common.Rounds.SemiFinal"));
+			clientLang.put("Rounds.QuaterFinal", get("Common.Rounds.QuaterFinal"));
+			clientLang.put("Rounds.Others", get("Common.Rounds.Others"));
 			
-			clientLang.put("Title", getLang("Title"));
+			clientLang.put("Title", get("Title"));
 			
 		} catch (Exception e) {
 			IO.writeLn("Error while parsing language.yml: You might want to check the syntax on the lines below");
@@ -80,8 +84,12 @@ public class Lang {
 		}
 	}
 	
+	public HashMap<String, String> getClientLang() {
+		return clientLang;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public static String getLang(String key) {
+	public String get(String key) {
 		try {
 			String[] tree = key.split("\\.");
 			HashMap<String, Object> map = lang;

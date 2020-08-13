@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.ClientFunctions.FunctionGetReport;
 import com.loohp.tournament.Utils.ArraysUtils;
@@ -31,11 +30,11 @@ public class Connection extends Thread {
 		Thread t = new Thread(new Runnable() {
 		    @Override
 		    public void run() {
-		    	String clientLang = CustomHashMapUtils.serialize(Lang.clientLang);
+		    	String clientLang = CustomHashMapUtils.serialize(TournamentServer.getInstance().getLang().getClientLang());
 		    	send("function:serverlang=" + clientLang);
 		    	
-		    	if (TournamentServer.activeCompetition.isPresent()) {
-					send("function:getroundnum=" + TournamentServer.activeCompetition.get().getRounds().size());
+		    	if (TournamentServer.getInstance().hasActiveCompetition()) {
+					send("function:getroundnum=" + TournamentServer.getInstance().getActiveCompetition().getRounds().size());
 				} else {
 					send("function:getroundnum=-1");
 				}
@@ -68,8 +67,8 @@ public class Connection extends Thread {
 	    			if (in.equals("function:getreport")) {
 	    				FunctionGetReport.GenAndSendReport(this);
 	    			} else if (in.startsWith("function:getroundnum")) {
-	    				if (TournamentServer.activeCompetition.isPresent()) {
-	    					send("function:getroundnum=" + TournamentServer.activeCompetition.get().getRounds().size());
+	    				if (TournamentServer.getInstance().hasActiveCompetition()) {
+	    					send("function:getroundnum=" + TournamentServer.getInstance().getActiveCompetition().getRounds().size());
 	    				} else {
 	    					send("function:getroundnum=-1");
 	    				}
@@ -84,10 +83,10 @@ public class Connection extends Thread {
     		try {
 				client_socket.close();
 			} catch (IOException e1) {}
-    		Server.clients.remove(this);
+    		TournamentServer.getInstance().getServer().getClients().remove(this);
     		IO.writeLn("");
     		String str = client_socket.getInetAddress().getHostName() + ":" + client_socket.getPort();
-			IO.writeLn(Lang.getLang("Server.Disconnect").replace("%s", str));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Server.Disconnect").replace("%s", str));
 			IO.write("> ");
 		}
     }
@@ -110,10 +109,10 @@ public class Connection extends Thread {
 			try {
 				client_socket.close();
 			} catch (IOException e1) {}
-			Server.clients.remove(this);
+			TournamentServer.getInstance().getServer().getClients().remove(this);
 			IO.writeLn("");
 			String str = client_socket.getInetAddress().getHostName() + ":" + client_socket.getPort();
-			IO.writeLn(Lang.getLang("Server.Disconnect").replace("%s", str));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Server.Disconnect").replace("%s", str));
 			IO.write("> ");
 		}
     }

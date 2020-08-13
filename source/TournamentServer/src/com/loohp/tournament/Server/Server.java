@@ -7,18 +7,22 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.GUI.ClientTextOutput;
 import com.loohp.tournament.Utils.IO;
 
-public class Server {
+public class Server extends Thread {
+
+	private List<Connection> clients = new CopyOnWriteArrayList<Connection>();
+	private ServerSocket serverSocket;
+	private int serverPort;
 	
-	public static List<Connection> clients = new CopyOnWriteArrayList<Connection>();
-	public static ServerSocket serverSocket;
+	public Server(int port) {
+		this.serverPort = port;
+		start();
+	}
 	
-	public static void start() {
-		
+	public void run() {
 		Thread t1 = new Thread(new Runnable() {
 		    @Override
 		    public void run() {
@@ -35,13 +39,13 @@ public class Server {
 		t1.start();
 		
 		try {
-			serverSocket = new ServerSocket(TournamentServer.serverPort);
+			serverSocket = new ServerSocket(serverPort);
 			IO.writeLn("Tournament System Server listening on [" + serverSocket.getInetAddress().getHostName() + ":" + serverSocket.getLocalPort() + "]");
 	        while (true) {
 	            Socket connection = serverSocket.accept();
 	            IO.writeLn("");
 	            String str = connection.getInetAddress().getHostName() + ":" + connection.getPort();
-				IO.writeLn(Lang.getLang("Server.Connect").replace("%s", str));
+				IO.writeLn(TournamentServer.getInstance().getLang().get("Server.Connect").replace("%s", str));
 				IO.write("> ");
 	            Connection sc = new Connection(connection);
 	            clients.add(sc);
@@ -50,6 +54,14 @@ public class Server {
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	    }
+	}
+	
+	public List<Connection> getClients() {
+		return clients;
+	}
+
+	public ServerSocket getServerSocket() {
+		return serverSocket;
 	}
 
 }

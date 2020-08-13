@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.ClientFunctions.FunctionSendFinalReport;
 import com.loohp.tournament.Player.Player;
@@ -36,22 +35,22 @@ public class Finish {
 		try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {}
 		IO.writeLn("===========================================================================================");
 		IO.writeLn("===========================================================================================");
-		IO.writeLn(Lang.getLang("Functions.Finish.CompetitionComplete"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.CompetitionComplete"));
 		IO.writeLn("===========================================================================================");
 		List<Player> top4 = new ArrayList<Player>();
-		Player first = TournamentServer.activeCompetition.get().getGroups().get(TournamentServer.activeCompetition.get().getGroups().size() - 1).getWinner().get();
+		Player first = TournamentServer.getInstance().getActiveCompetition().getGroups().get(TournamentServer.getInstance().getActiveCompetition().getGroups().size() - 1).getWinner().get();
 		top4.add(first);
 		Player runner = null;
-		if (TournamentServer.activeCompetition.get().getGroups().get(TournamentServer.activeCompetition.get().getGroups().size() - 1).getHome().equals(first)) {
-			runner = TournamentServer.activeCompetition.get().getGroups().get(TournamentServer.activeCompetition.get().getGroups().size() - 1).getAway();
+		if (TournamentServer.getInstance().getActiveCompetition().getGroups().get(TournamentServer.getInstance().getActiveCompetition().getGroups().size() - 1).getHome().equals(first)) {
+			runner = TournamentServer.getInstance().getActiveCompetition().getGroups().get(TournamentServer.getInstance().getActiveCompetition().getGroups().size() - 1).getAway();
 		} else {
-			runner = TournamentServer.activeCompetition.get().getGroups().get(TournamentServer.activeCompetition.get().getGroups().size() - 1).getHome();
+			runner = TournamentServer.getInstance().getActiveCompetition().getGroups().get(TournamentServer.getInstance().getActiveCompetition().getGroups().size() - 1).getHome();
 		}
 		top4.add(runner);
 		Player runner2 = null;
 		Player runner3 = null;
-		if (TournamentServer.activeCompetition.get().getRounds().size() > 1) {
-			Round semi = TournamentServer.activeCompetition.get().getRounds().get(TournamentServer.activeCompetition.get().getRounds().size() - 2);
+		if (TournamentServer.getInstance().getActiveCompetition().getRounds().size() > 1) {
+			Round semi = TournamentServer.getInstance().getActiveCompetition().getRounds().get(TournamentServer.getInstance().getActiveCompetition().getRounds().size() - 2);
 			for (Player player : RoundUtils.getPlayersInRound(semi)) {
 				if (!top4.contains(player)) {
 					runner2 = player;
@@ -67,36 +66,36 @@ public class Finish {
 				}
 			}
 		}
-		IO.writeLn(Lang.getLang("Functions.Finish.Winner").replace("%s", first.getName()));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.Winner").replace("%s", first.getName()));
 		IO.writeLn("");
-		IO.writeLn(Lang.getLang("Functions.Finish.RunnerUp").replace("%s", runner.getName()));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.RunnerUp").replace("%s", runner.getName()));
 		IO.writeLn("");
 		if (runner2 != null) {
-			IO.writeLn(Lang.getLang("Functions.Finish.RunnerUp2").replace("%s", runner2.getName() + (runner3 != null ? ", " : "") + (runner3 != null ? runner3.getName() : "")));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.RunnerUp2").replace("%s", runner2.getName() + (runner3 != null ? ", " : "") + (runner3 != null ? runner3.getName() : "")));
 		}
 		
 		IO.writeLn("");
 		IO.writeLn("");
-		IO.writeLn(Lang.getLang("Functions.Finish.PrintingReport"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.PrintingReport"));
 		ReportGenerator.finish(Optional.empty(), first, runner, runner2, runner3);
 		FunctionSendFinalReport.sendReports(first, runner, runner2, runner3);
 		
-		IO.writeLn(Lang.getLang("Functions.Finish.SettingTop4Seeded"));
-		for (Player player : TournamentServer.playerList) {
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.SettingTop4Seeded"));
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			player.setSeeded(false);
 		}
 		for (Player player : top4) {
 			player.setSeeded(true);
 		}
 		
-		if (TournamentServer.loadWeb) {
-			WebManager.updateHtml(TournamentServer.activeCompetition.get());
+		if (TournamentServer.getInstance().isLoadWeb()) {
+			WebManager.updateHtml(TournamentServer.getInstance().getActiveCompetition());
 		}
-		TournamentServer.activeCompetition = Optional.empty();
+		TournamentServer.getInstance().setActiveCompetition(null);
 		
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-		for (int i = 0; i < TournamentServer.playerList.size(); i++) {
-			Player player = TournamentServer.playerList.get(i);
+		for (int i = 0; i < TournamentServer.getInstance().getPlayerList().size(); i++) {
+			Player player = TournamentServer.getInstance().getPlayerList().get(i);
 			LinkedHashMap<String, Object> submap = new LinkedHashMap<String, Object>();
 			submap.put("Name", player.getName());
 			submap.put("School", player.getSchool());
@@ -114,10 +113,10 @@ public class Finish {
 		Yaml yaml = new Yaml(customRepresenter, options);
 		
 		String fileName = "players.yml";
-		File file = new File(TournamentServer.DataFolder, fileName);	
+		File file = new File(TournamentServer.getInstance().getDataFolder(), fileName);	
 		
-		File backup = new File(TournamentServer.DataFolder.getPath() + "/backups", new SimpleDateFormat("'players_backup_'yyyy'-'MM'-'dd'_'HH'-'mm'-'ss'_'zzz'.yml'").format(new Date()));
-		new File(TournamentServer.DataFolder.getPath() + "/backups").mkdir();
+		File backup = new File(TournamentServer.getInstance().getDataFolder().getPath() + "/backups", new SimpleDateFormat("'players_backup_'yyyy'-'MM'-'dd'_'HH'-'mm'-'ss'_'zzz'.yml'").format(new Date()));
+		new File(TournamentServer.getInstance().getDataFolder().getPath() + "/backups").mkdir();
         try (InputStream in = new FileInputStream(file)) {
             Files.copy(in, backup.toPath());
         } catch (IOException e) {
@@ -144,6 +143,6 @@ public class Finish {
 			IO.writeLn(errors.toString());
 		}      
 		
-		IO.writeLn(Lang.getLang("Functions.Finish.Reset"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.Reset"));
 	}
 }

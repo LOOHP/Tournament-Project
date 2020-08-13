@@ -3,7 +3,7 @@ package com.loohp.tournament.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.loohp.tournament.Lang;
+import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
@@ -13,13 +13,13 @@ public class RoundUtils {
 	public static String getRoundNameFromPlayerCount(int playerCount) {
 		switch (playerCount) {
 		case 2:
-			return Lang.getLang("Common.Rounds.Final").replace("%s", playerCount + "");
+			return TournamentServer.getInstance().getLang().get("Common.Rounds.Final").replace("%s", playerCount + "");
 		case 4:
-			return Lang.getLang("Common.Rounds.SemiFinal").replace("%s", playerCount + "");
+			return TournamentServer.getInstance().getLang().get("Common.Rounds.SemiFinal").replace("%s", playerCount + "");
 		case 8:
-			return Lang.getLang("Common.Rounds.QuaterFinal").replace("%s", playerCount + "");
+			return TournamentServer.getInstance().getLang().get("Common.Rounds.QuaterFinal").replace("%s", playerCount + "");
 		default:
-			return Lang.getLang("Common.Rounds.Others").replace("%s", playerCount + "");
+			return TournamentServer.getInstance().getLang().get("Common.Rounds.Others").replace("%s", playerCount + "");
 		}
 	}
 	

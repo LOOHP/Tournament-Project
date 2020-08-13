@@ -1,8 +1,8 @@
 package com.loohp.tournament.Commands;
 
+import java.util.Arrays;
 import java.util.List;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Group.Group;
 import com.loohp.tournament.Player.Player;
@@ -10,12 +10,12 @@ import com.loohp.tournament.Utils.CustomStringUtils;
 import com.loohp.tournament.Utils.GroupUtils;
 import com.loohp.tournament.Utils.IO;
 
-public class ListPlayer {
+public class ListPlayer implements CommandExecutor {
 	
-	public static void listPlayers(String[] args) {
+	public void listPlayers(String[] args) {
 
 		if (args.length < 2) {
-			IO.writeLn(Lang.getLang("Commands.List.Usage"));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.List.Usage"));
 			return;
 		}
 		
@@ -30,8 +30,8 @@ public class ListPlayer {
 			return;
 		}
 		
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));
 			return;
 		}
 		
@@ -49,62 +49,62 @@ public class ListPlayer {
 					round = Integer.valueOf(args[2]);
 					round(round);
 				} catch (NumberFormatException e) {
-					IO.writeLn(Lang.getLang("Commands.List.IntegerExpected"));
+					IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.List.IntegerExpected"));
 				}
 			}
 			return;
 		}
 		
-		IO.writeLn(Lang.getLang("Commands.List.Usage"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.List.Usage"));
 	}
 	
-	public static void currentround() {
-		round(TournamentServer.activeCompetition.get().getActiveRound());
+	public void currentround() {
+		round(TournamentServer.getInstance().getActiveCompetition().getActiveRound());
 	}
 	
-	public static void round(int round) {
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));
+	public void round(int round) {
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));
 			return;
 		}
 		
-		int maxRounds = TournamentServer.activeCompetition.get().getRounds().size() - 1;
+		int maxRounds = TournamentServer.getInstance().getActiveCompetition().getRounds().size() - 1;
 		if (0 > round || maxRounds < round) {
-			IO.writeLn(Lang.getLang("Commands.List.RoundOutOfRange").replace("%s", maxRounds + ""));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.List.RoundOutOfRange").replace("%s", maxRounds + ""));
 			return;
 		}
 		
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%-89s|", TournamentServer.activeCompetition.get().getRounds().get(round).getName());
+		IO.writeF("|%-89s|", TournamentServer.getInstance().getActiveCompetition().getRounds().get(round).getName());
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+		IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
-		List<Group> groups = TournamentServer.activeCompetition.get().getRounds().get(round).getGroups();
+		List<Group> groups = TournamentServer.getInstance().getActiveCompetition().getRounds().get(round).getGroups();
 		for (Group group : groups) {
-			String home = Lang.getLang("Common.TBD");
+			String home = TournamentServer.getInstance().getLang().get("Common.TBD");
 			if (group.getHome() != null) {
 				home = group.getHome().getName();
 			} else {
 				if (GroupUtils.getHomeSideLastGroup(group) != null) {
-					home = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
+					home = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
 				}
 			}
-			String away = Lang.getLang("Common.TBD");
+			String away = TournamentServer.getInstance().getLang().get("Common.TBD");
 			if (group.getAway() != null) {
 				away = group.getAway().getName();
 			} else {
 				if (GroupUtils.getAwaySideLastGroup(group) != null) {
-					away = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
+					away = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
 				}
 			}
 			if (group.getWinner().isPresent()) {
 				Player winner = group.getWinner().get();
 				if (winner.equals(group.getAway())) {
-					away = Lang.getLang("Common.Winner") + " " + away;
+					away = TournamentServer.getInstance().getLang().get("Common.Winner") + " " + away;
 				} else {
-					home = home + " " + Lang.getLang("Common.Winner");
+					home = home + " " + TournamentServer.getInstance().getLang().get("Common.Winner");
 				}
 			}
 			IO.writeF("|%-44s|%44s|", home, away);
@@ -113,16 +113,16 @@ public class ListPlayer {
 		}
 	}
 	
-	public static void normalList() {
-		if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));
+	public void normalList() {
+		if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));
 			return;
 		}
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%47s|%33s|%7s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.School"), Lang.getLang("Common.Seeded"));
+		IO.writeF("|%47s|%33s|%7s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.School"), TournamentServer.getInstance().getLang().get("Common.Seeded"));
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
-		for (Player player : TournamentServer.playerList) {
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			String name = player.getName();
 			String school = player.getSchool();
 			String seeded = String.valueOf(player.getSeeded());
@@ -132,16 +132,16 @@ public class ListPlayer {
 		IO.writeLn("===========================================================================================");
 	}
 	
-	public static void uuidList() {
-		if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));
+	public void uuidList() {
+		if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));
 			return;
 		}
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%47s|%41s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.UUID"));
+		IO.writeF("|%47s|%41s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.UUID"));
 		IO.writeLn("");
 		IO.writeLn("===========================================================================================");
-		for (Player player : TournamentServer.playerList) {
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			String name = player.getName();
 			String id = player.getId().toString();
 			IO.writeF("|%47s|%41s|", name, id);
@@ -150,15 +150,15 @@ public class ListPlayer {
 		IO.writeLn("===========================================================================================");
 	}
 	
-	public static void seededList() {
-		if (TournamentServer.playerList.size() == 0) {
+	public void seededList() {
+		if (TournamentServer.getInstance().getPlayerList().size() == 0) {
 			IO.writeLn("There are no players!");
 			return;
 		}
 		IO.writeLn("===========================================================================================");
-		IO.writeF("|%81s|%7s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.Seeded"));
+		IO.writeF("|%81s|%7s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.Seeded"));
 		IO.writeLn("===========================================================================================");
-		for (Player player : TournamentServer.playerList) {
+		for (Player player : TournamentServer.getInstance().getPlayerList()) {
 			if (player.getSeeded()) {
 				String name = player.getName();
 				String seeded = String.valueOf(player.getSeeded());
@@ -167,5 +167,16 @@ public class ListPlayer {
 			}
 		}
 		IO.writeLn("===========================================================================================");
+	}
+
+	@Override
+	public void execute(String[] args) {
+		if (args[0].equalsIgnoreCase("list")) {
+			if (Arrays.asList(args).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
+				IO.writeLn(TournamentServer.getInstance().getLang().get("Commands.List.Usage"));
+			} else {
+				listPlayers(args);
+			}
+		}
 	}
 }

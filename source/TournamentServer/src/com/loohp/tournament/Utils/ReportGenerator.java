@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.loohp.tournament.Lang;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Competition.Competition;
 import com.loohp.tournament.Group.Group;
@@ -36,7 +35,7 @@ public class ReportGenerator {
         File dir = ReportFolder;
         dir.mkdirs();
         File file = new File(dir, fileName);
-        IO.writeLn(Lang.getLang("Functions.ReportGenerator.CreateFile").replace("%s", file.toString()));
+        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.CreateFile").replace("%s", file.toString()));
         try {
 			file.createNewFile();
 		} catch (IOException e1) {
@@ -51,15 +50,15 @@ public class ReportGenerator {
         
         System.setOut(writer);
              
-        if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));	
+        if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));	
 		} else {
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.PlayerList"));	
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.PlayerList"));	
 			IO.writeLn("===========================================================================================");
-			IO.writeF("|%47s|%33s|%7s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.School"), Lang.getLang("Common.Seeded"));
+			IO.writeF("|%47s|%33s|%7s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.School"), TournamentServer.getInstance().getLang().get("Common.Seeded"));
 			IO.writeLn("");
 			IO.writeLn("===========================================================================================");
-			for (Player player : TournamentServer.playerList) {
+			for (Player player : TournamentServer.getInstance().getPlayerList()) {
 				String name = player.getName();
 				String school = player.getSchool();
 				String seeded = String.valueOf(player.getSeeded());
@@ -72,15 +71,15 @@ public class ReportGenerator {
         IO.writeLn("");
         IO.writeLn("");
         IO.writeLn("");
-		if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));	
+		if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));	
 		} else {
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.UUIDList"));	
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.UUIDList"));	
 			IO.writeLn("===========================================================================================");
-			IO.writeF("|%47s|%41s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.UUID"));
+			IO.writeF("|%47s|%41s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.UUID"));
 			IO.writeLn("");
 			IO.writeLn("===========================================================================================");
-			for (Player player : TournamentServer.playerList) {
+			for (Player player : TournamentServer.getInstance().getPlayerList()) {
 				String name = player.getName();
 				String id = player.getId().toString();
 				IO.writeF("|%47s|%41s|", name, id);
@@ -92,46 +91,46 @@ public class ReportGenerator {
 		IO.writeLn("");
         IO.writeLn("");
         IO.writeLn("");
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));	
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));	
 		} else {
-			Competition comp = TournamentServer.activeCompetition.get();
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.CurrentStage").replace("%s", TournamentServer.activeCompetition.get().getRounds().get(TournamentServer.activeCompetition.get().getActiveRound()).getName()));	
+			Competition comp = TournamentServer.getInstance().getActiveCompetition();
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.CurrentStage").replace("%s", comp.getRounds().get(comp.getActiveRound()).getName()));	
 			IO.writeLn("");
 	        IO.writeLn("");
-	        IO.writeLn(Lang.getLang("Functions.ReportGenerator.Fixtures"));
+	        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Fixtures"));
 			for (int i = 0; i < comp.getGroups().size(); i++) {
 				Group group = comp.getGroups().get(i);
 				IO.writeLn("===========================================================================================");
-				String header = Lang.getLang("Functions.ReportGenerator.Match").replace("%s", GroupUtils.getMatchNumber(group) + " - " + RoundUtils.getRoundNameFromRoundNumber(group.getRound().getRoundNumber()));
+				String header = TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Match").replace("%s", GroupUtils.getMatchNumber(group) + " - " + RoundUtils.getRoundNameFromRoundNumber(group.getRound().getRoundNumber()));
 				IO.writeF("|%-89s|", header);
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+				IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				String home = Lang.getLang("Common.TBD");
+				String home = TournamentServer.getInstance().getLang().get("Common.TBD");
 				if (group.getHome() != null) {
 					home = group.getHome().getName();
 				} else {
 					if (GroupUtils.getHomeSideLastGroup(group) != null) {
-						home = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
+						home = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
 					}
 				}
-				String away = Lang.getLang("Common.TBD");
+				String away = TournamentServer.getInstance().getLang().get("Common.TBD");
 				if (group.getAway() != null) {
 					away = group.getAway().getName();
 				} else {
 					if (GroupUtils.getAwaySideLastGroup(group) != null) {
-						away = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
+						away = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
 					}
 				}
 				if (group.getWinner().isPresent()) {
 					Player winner = group.getWinner().get();
 					if (winner.equals(group.getAway())) {
-						away = Lang.getLang("Common.Winner") + " " + away;
+						away = TournamentServer.getInstance().getLang().get("Common.Winner") + " " + away;
 					} else {
-						home = home + " " + Lang.getLang("Common.Winner");
+						home = home + " " + TournamentServer.getInstance().getLang().get("Common.Winner");
 					}
 				}
 				IO.writeF("|%-44s|%44s|", home, away);
@@ -145,40 +144,40 @@ public class ReportGenerator {
 	        IO.writeLn("");
 	        IO.writeLn("");
 	        
-	        IO.writeLn(Lang.getLang("Functions.ReportGenerator.Rounds"));
+	        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Rounds"));
 	        for (int i = 0; i < comp.getRounds().size(); i++) {
 	        	Round round = comp.getRounds().get(i);
 	        	IO.writeLn("===========================================================================================");
 				IO.writeF("|%-89s|", round.getName());
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+				IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 				IO.writeLn("");
 				List<Group> groups = round.getGroups();
 				for (Group group : groups) {
 					IO.writeLn("-------------------------------------------------------------------------------------------");
-					String home = Lang.getLang("Common.TBD");
+					String home = TournamentServer.getInstance().getLang().get("Common.TBD");
 					if (group.getHome() != null) {
 						home = group.getHome().getName();
 					} else {
 						if (GroupUtils.getHomeSideLastGroup(group) != null) {
-							home = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
+							home = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
 						}
 					}
-					String away = Lang.getLang("Common.TBD");
+					String away = TournamentServer.getInstance().getLang().get("Common.TBD");
 					if (group.getAway() != null) {
 						away = group.getAway().getName();
 					} else {
 						if (GroupUtils.getAwaySideLastGroup(group) != null) {
-							away = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
+							away = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
 						}
 					}
 					if (group.getWinner().isPresent()) {
 						Player winner = group.getWinner().get();
 						if (winner.equals(group.getAway())) {
-							away = Lang.getLang("Common.Winner") + " " + away;
+							away = TournamentServer.getInstance().getLang().get("Common.Winner") + " " + away;
 						} else {
-							home = home + " " + Lang.getLang("Common.Winner");
+							home = home + " " + TournamentServer.getInstance().getLang().get("Common.Winner");
 						}
 					}
 					IO.writeF("|%-44s|%44s|", home, away);
@@ -191,13 +190,13 @@ public class ReportGenerator {
 		}
 		
 		IO.writeLn("");
-		IO.writeLn(Lang.getLang("Functions.ReportGenerator.FinalResults"));
-		IO.writeLn(Lang.getLang("Functions.ReportGenerator.Ongoing"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.FinalResults"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Ongoing"));
 		
 		writer.flush();
 		writer.close();
 		
-		System.setOut(TournamentServer.stdout);
+		System.setOut(TournamentServer.getInstance().stdout);
 	}
 	
 	public static void finish(Optional<String> customFileName, Player first, Player runner, Player runner2, Player runner3) {
@@ -212,7 +211,7 @@ public class ReportGenerator {
         File dir = ReportFolder;
         dir.mkdirs();
         File file = new File(dir, fileName);
-        IO.writeLn(Lang.getLang("Functions.ReportGenerator.CreateFile").replace("%s", file.toString()));
+        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.CreateFile").replace("%s", file.toString()));
         try {
 			file.createNewFile();
 		} catch (IOException e1) {
@@ -227,15 +226,15 @@ public class ReportGenerator {
         
         System.setOut(writer);
              
-        if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));	
+        if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));	
 		} else {
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.PlayerList"));	
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.PlayerList"));	
 			IO.writeLn("===========================================================================================");
-			IO.writeF("|%47s|%33s|%7s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.School"), Lang.getLang("Common.Seeded"));
+			IO.writeF("|%47s|%33s|%7s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.School"), TournamentServer.getInstance().getLang().get("Common.Seeded"));
 			IO.writeLn("");
 			IO.writeLn("===========================================================================================");
-			for (Player player : TournamentServer.playerList) {
+			for (Player player : TournamentServer.getInstance().getPlayerList()) {
 				String name = player.getName();
 				String school = player.getSchool();
 				String seeded = String.valueOf(player.getSeeded());
@@ -248,15 +247,15 @@ public class ReportGenerator {
         IO.writeLn("");
         IO.writeLn("");
         IO.writeLn("");
-		if (TournamentServer.playerList.size() == 0) {
-			IO.writeLn(Lang.getLang("Common.NoPlayers"));	
+		if (TournamentServer.getInstance().getPlayerList().size() == 0) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.NoPlayers"));	
 		} else {
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.UUIDList"));	
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.UUIDList"));	
 			IO.writeLn("===========================================================================================");
-			IO.writeF("|%47s|%33s|%7s|", Lang.getLang("Common.PlayerName"), Lang.getLang("Common.School"), Lang.getLang("Common.Seeded"));
+			IO.writeF("|%47s|%33s|%7s|", TournamentServer.getInstance().getLang().get("Common.PlayerName"), TournamentServer.getInstance().getLang().get("Common.School"), TournamentServer.getInstance().getLang().get("Common.Seeded"));
 			IO.writeLn("");
 			IO.writeLn("===========================================================================================");
-			for (Player player : TournamentServer.playerList) {
+			for (Player player : TournamentServer.getInstance().getPlayerList()) {
 				String name = player.getName();
 				String id = player.getId().toString();
 				IO.writeF("|%47s|%41s|", name, id);
@@ -268,46 +267,46 @@ public class ReportGenerator {
 		IO.writeLn("");
         IO.writeLn("");
         IO.writeLn("");
-		if (!TournamentServer.activeCompetition.isPresent()) {
-			IO.writeLn(Lang.getLang("Common.CompetitionNotRunning"));	
+		if (!TournamentServer.getInstance().hasActiveCompetition()) {
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Common.CompetitionNotRunning"));	
 		} else {
-			Competition comp = TournamentServer.activeCompetition.get();
-			IO.writeLn(Lang.getLang("Functions.ReportGenerator.CurrentStage").replace("%s", TournamentServer.activeCompetition.get().getRounds().get(TournamentServer.activeCompetition.get().getActiveRound()).getName()));	
+			Competition comp = TournamentServer.getInstance().getActiveCompetition();
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.CurrentStage").replace("%s", comp.getRounds().get(comp.getActiveRound()).getName()));	
 			IO.writeLn("");
 	        IO.writeLn("");
-	        IO.writeLn(Lang.getLang("Functions.ReportGenerator.Fixtures"));
+	        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Fixtures"));
 			for (int i = 0; i < comp.getGroups().size(); i++) {
 				Group group = comp.getGroups().get(i);
 				IO.writeLn("===========================================================================================");
-				String header = Lang.getLang("Functions.ReportGenerator.Match").replace("%s", GroupUtils.getMatchNumber(group) + " - " + RoundUtils.getRoundNameFromRoundNumber(group.getRound().getRoundNumber()));
+				String header = TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Match").replace("%s", GroupUtils.getMatchNumber(group) + " - " + RoundUtils.getRoundNameFromRoundNumber(group.getRound().getRoundNumber()));
 				IO.writeF("|%-89s|", header);
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+				IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				String home = Lang.getLang("Common.TBD");
+				String home = TournamentServer.getInstance().getLang().get("Common.TBD");
 				if (group.getHome() != null) {
 					home = group.getHome().getName();
 				} else {
 					if (GroupUtils.getHomeSideLastGroup(group) != null) {
-						home = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
+						home = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
 					}
 				}
-				String away = Lang.getLang("Common.TBD");
+				String away = TournamentServer.getInstance().getLang().get("Common.TBD");
 				if (group.getAway() != null) {
 					away = group.getAway().getName();
 				} else {
 					if (GroupUtils.getAwaySideLastGroup(group) != null) {
-						away = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
+						away = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
 					}
 				}
 				if (group.getWinner().isPresent()) {
 					Player winner = group.getWinner().get();
 					if (winner.equals(group.getAway())) {
-						away = Lang.getLang("Common.Winner") + " " + away;
+						away = TournamentServer.getInstance().getLang().get("Common.Winner") + " " + away;
 					} else {
-						home = home + " " + Lang.getLang("Common.Winner");
+						home = home + " " + TournamentServer.getInstance().getLang().get("Common.Winner");
 					}
 				}
 				IO.writeF("|%-44s|%44s|", home, away);
@@ -321,40 +320,40 @@ public class ReportGenerator {
 	        IO.writeLn("");
 	        IO.writeLn("");
 	        
-	        IO.writeLn(Lang.getLang("Functions.ReportGenerator.Rounds"));
+	        IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Rounds"));
 	        for (int i = 0; i < comp.getRounds().size(); i++) {
 	        	Round round = comp.getRounds().get(i);
 	        	IO.writeLn("===========================================================================================");
 				IO.writeF("|%-89s|", round.getName());
 				IO.writeLn("");
 				IO.writeLn("-------------------------------------------------------------------------------------------");
-				IO.writeF("|%-44s|%44s|", Lang.getLang("Common.Home"), Lang.getLang("Common.Away"));
+				IO.writeF("|%-44s|%44s|", TournamentServer.getInstance().getLang().get("Common.Home"), TournamentServer.getInstance().getLang().get("Common.Away"));
 				IO.writeLn("");
 				List<Group> groups = round.getGroups();
 				for (Group group : groups) {
 					IO.writeLn("-------------------------------------------------------------------------------------------");
-					String home = Lang.getLang("Common.TBD");
+					String home = TournamentServer.getInstance().getLang().get("Common.TBD");
 					if (group.getHome() != null) {
 						home = group.getHome().getName();
 					} else {
 						if (GroupUtils.getHomeSideLastGroup(group) != null) {
-							home = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
+							home = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getHomeSideLastGroup(group)) + "");
 						}
 					}
-					String away = Lang.getLang("Common.TBD");
+					String away = TournamentServer.getInstance().getLang().get("Common.TBD");
 					if (group.getAway() != null) {
 						away = group.getAway().getName();
 					} else {
 						if (GroupUtils.getAwaySideLastGroup(group) != null) {
-							away = Lang.getLang("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
+							away = TournamentServer.getInstance().getLang().get("Common.WinnerOfMatch").replace("%s", GroupUtils.getMatchNumber(GroupUtils.getAwaySideLastGroup(group)) + "");
 						}
 					}
 					if (group.getWinner().isPresent()) {
 						Player winner = group.getWinner().get();
 						if (winner.equals(group.getAway())) {
-							away = Lang.getLang("Common.Winner") + " " + away;
+							away = TournamentServer.getInstance().getLang().get("Common.Winner") + " " + away;
 						} else {
-							home = home + " " + Lang.getLang("Common.Winner");
+							home = home + " " + TournamentServer.getInstance().getLang().get("Common.Winner");
 						}
 					}
 					IO.writeF("|%-44s|%44s|", home, away);
@@ -367,18 +366,18 @@ public class ReportGenerator {
 		}
 		
 		IO.writeLn("");
-		IO.writeLn(Lang.getLang("Functions.ReportGenerator.FinalResults"));
-		IO.writeLn(Lang.getLang("Functions.ReportGenerator.Winner").replace("%s", first.getName()));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.FinalResults"));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Winner").replace("%s", first.getName()));
 		IO.writeLn("");
-		IO.writeLn(Lang.getLang("Functions.ReportGenerator.RunnerUp").replace("%s", runner.getName()));
+		IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.RunnerUp").replace("%s", runner.getName()));
 		IO.writeLn("");
 		if (runner2 != null) {
-			IO.writeLn(Lang.getLang("Functions.Finish.RunnerUp2").replace("%s", runner2.getName() + (runner3 != null ? ", " : "") + (runner3 != null ? runner3.getName() : "")));
+			IO.writeLn(TournamentServer.getInstance().getLang().get("Functions.Finish.RunnerUp2").replace("%s", runner2.getName() + (runner3 != null ? ", " : "") + (runner3 != null ? runner3.getName() : "")));
 		}
 		
 		writer.flush();
 		writer.close();
 		
-		System.setOut(TournamentServer.stdout);
+		System.setOut(TournamentServer.getInstance().stdout);
 	}
 }

@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+import com.loohp.tournament.Commands.CommandsManager;
 import com.loohp.tournament.Commands.Exit;
 import com.loohp.tournament.Commands.Find;
 import com.loohp.tournament.Commands.Import;
@@ -30,27 +30,45 @@ import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Server.Server;
 import com.loohp.tournament.Utils.IO;
 import com.loohp.tournament.Utils.NetworkUtils;
-import com.loohp.tournament.Utils.RoundCheck;
 import com.loohp.tournament.Web.Web;
 
 public class TournamentServer {
 	
-	public static BufferedReader in;
-	public static File DataFolder = new File("configs");
-	
-	public static List<Player> playerList = new CopyOnWriteArrayList<Player>();
-	
-	public static Optional<Competition> activeCompetition = Optional.empty();
-	
-	public static PrintStream stdout = null;
-	
-	public static boolean GUIrunning = true;
-	public static boolean loadServer = true;
-	public static boolean loadWeb = true;
-	public static int serverPort = 1720;
-	public static int webPort = 8080;
+	public static TournamentServer instance;
 	
 	public static void main(String args[]) {
+		new TournamentServer(args);
+	}
+	
+	public static TournamentServer getInstance() {
+		return instance;
+	}
+	
+	//==============================
+	
+	public BufferedReader in;
+	private File DataFolder = new File("configs");
+
+	private List<Player> playerList = new CopyOnWriteArrayList<Player>();
+	
+	private Optional<Competition> activeCompetition = Optional.empty();
+	
+	public PrintStream stdout = null;
+	
+	private boolean GUIrunning = true;
+	private boolean loadServer = true;
+	private boolean loadWeb = true;
+	private int serverPort = 1720;
+	private int webPort = 8080;
+	
+	private Lang lang;
+	private Server server;
+
+	private CommandsManager commandsManager;
+	
+	public TournamentServer(String args[]) {
+		
+		instance = this;
 		
 		long startunixtime = System.currentTimeMillis();		
 		in = new BufferedReader(new InputStreamReader(System.in));
@@ -130,13 +148,13 @@ public class TournamentServer {
 		Import.initPlayersFile();
 		
 		IO.writeLn("Loading language..");
-		Lang.load();
+		lang = new Lang(DataFolder);
 		
 		IO.writeLn("Loading database..");
 		Database.loadDatabase();
-		TournamentServer.playerList = Database.getPlayers();
-		TournamentServer.activeCompetition = Database.loadCompetition();
-		IO.writeLn(Lang.getLang("StartUp.LoadedPlayers").replace("%s", TournamentServer.playerList.size() + ""));
+		playerList = Database.getPlayers();
+		activeCompetition = Database.loadCompetition();
+		IO.writeLn(lang.get("StartUp.LoadedPlayers").replace("%s", playerList.size() + ""));
 		
 		if (loadServer) {
 			if (!NetworkUtils.available(serverPort)) {
@@ -147,13 +165,7 @@ public class TournamentServer {
 				IO.writeLn("");
 				Exit.exit(1);
 			}
-			Thread t3 = new Thread(new Runnable() {
-			    @Override
-			    public void run() {
-			       	Server.start();
-			    }
-			});  
-			t3.start();
+			server = new Server(serverPort);
 		}
 		
 		if (loadWeb) {
@@ -175,9 +187,20 @@ public class TournamentServer {
 			try {TimeUnit.MILLISECONDS.sleep(1000);} catch (InterruptedException e) {}
 		}
 		
+		commandsManager = new CommandsManager();
+		commandsManager.registerCommands(new Exit());
+		commandsManager.registerCommands(new Find());
+		commandsManager.registerCommands(new Import());
+		commandsManager.registerCommands(new ListPlayer());
+		commandsManager.registerCommands(new Promotion());
+		commandsManager.registerCommands(new Report());
+		commandsManager.registerCommands(new Restart());
+		commandsManager.registerCommands(new Start());
+		commandsManager.registerCommands(new Unpromote());
+		
 		long doneunixtime = System.currentTimeMillis();		
 		IO.writeLn("Done! (" + (doneunixtime - startunixtime) + "ms)");
-		IO.writeLn(Lang.getLang("StartUp.CurrentTime").replace("%s", new SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss' 'zzz").format(new Date())));
+		IO.writeLn(lang.get("StartUp.CurrentTime").replace("%s", new SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss' 'zzz").format(new Date())));
 		
 		try {TimeUnit.MILLISECONDS.sleep(500);} catch (InterruptedException e) {}
 		
@@ -191,105 +214,91 @@ public class TournamentServer {
 				String[] inp = IO.readLn();
 				
 				if (inp.length > 0) {				
-					if (inp[0].equalsIgnoreCase("exit") || inp[0].equalsIgnoreCase("stop")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Exit.Usage"));
-						} else {
-							Exit.exit();
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("import")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Import.Usage"));
-						} else {
-							Import.onImport(inp);
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("list")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.List.Usage"));
-						} else {
-							ListPlayer.listPlayers(inp);
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("start")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Start.Usage"));
-						} else {
-							Start.startCompetition();
-							RoundCheck.check();
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("promote")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Promote.Usage"));
-						} else {
-							Promotion.promote(inp);
-							RoundCheck.check();
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("restart")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Restart.Usage"));
-						} else {
-							Restart.restart(inp);
-							RoundCheck.check();
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("unpromote") || inp[0].toLowerCase().equalsIgnoreCase("demote")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Unpromote.Usage"));
-						} else {
-							Unpromote.undo(inp);
-							RoundCheck.check();
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("report")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Report.Usage"));
-						} else {
-							Report.generate(inp);
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("find")) {
-						if (Arrays.asList(inp).stream().anyMatch(each -> each.equalsIgnoreCase("--help"))) {
-							IO.writeLn(Lang.getLang("Commands.Find.Usage"));
-						} else {
-							Find.findPlayer(inp);
-						}
-						
-					} else if (inp[0].equalsIgnoreCase("help")) {
+					if (inp[0].equalsIgnoreCase("help")) {
 						IO.writeLn("");
-						IO.writeLn(Lang.getLang("Commands.Help.Header"));
+						IO.writeLn(lang.get("Commands.Help.Header"));
 						IO.writeF("    %-15s    ", "import");
-						IO.writeLn(Lang.getLang("Commands.Import.Description"));
+						IO.writeLn(lang.get("Commands.Import.Description"));
 						IO.writeF("    %-15s    ", "list");
-						IO.writeLn(Lang.getLang("Commands.List.Description"));
+						IO.writeLn(lang.get("Commands.List.Description"));
 						IO.writeF("    %-15s    ", "start");
-						IO.writeLn(Lang.getLang("Commands.Start.Description"));
+						IO.writeLn(lang.get("Commands.Start.Description"));
 						IO.writeF("    %-15s    ", "restart");
-						IO.writeLn(Lang.getLang("Commands.Restart.Description"));
+						IO.writeLn(lang.get("Commands.Restart.Description"));
 						IO.writeF("    %-15s    ", "promote");
-						IO.writeLn(Lang.getLang("Commands.Promote.Description"));
+						IO.writeLn(lang.get("Commands.Promote.Description"));
 						IO.writeF("    %-15s    ", "unpromote");
-						IO.writeLn(Lang.getLang("Commands.Unpromote.Description"));
+						IO.writeLn(lang.get("Commands.Unpromote.Description"));
 						IO.writeF("    %-15s    ", "find");
-						IO.writeLn(Lang.getLang("Commands.Find.Description"));
+						IO.writeLn(lang.get("Commands.Find.Description"));
 						IO.writeF("    %-15s    ", "report");
-						IO.writeLn(Lang.getLang("Commands.Report.Description"));
+						IO.writeLn(lang.get("Commands.Report.Description"));
 						IO.writeF("    %-15s    ", "exit");
-						IO.writeLn(Lang.getLang("Commands.Exit.Description"));
+						IO.writeLn(lang.get("Commands.Exit.Description"));
 						IO.writeF("    %-15s    ", "help");
-						IO.writeLn(Lang.getLang("Commands.Help.Description"));
-						IO.writeLn("");
-						
-					} else if (!inp[0].equalsIgnoreCase("")) {
-						IO.writeLn(Lang.getLang("Common.UnknownCommand"));
+						IO.writeLn(lang.get("Commands.Help.Description"));
+						IO.writeLn("");						
+					//} else if (!inp[0].equalsIgnoreCase("")) {
+					//	IO.writeLn(lang.get("Common.UnknownCommand"));
+					} else {
+						commandsManager.fireExecutors(inp);
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}				
+	}
+	
+	public CommandsManager getCommandsManager() {
+		return commandsManager;
+	}
+	
+	public Server getServer() {
+		return server;
+	}
+
+	public Lang getLang() {
+		return lang;
+	}
+
+	public File getDataFolder() {
+		return DataFolder;
+	}
+
+	public List<Player> getPlayerList() {
+		return playerList;
+	}
+
+	public Competition getActiveCompetition() {
+		return activeCompetition.orElse(null);
+	}
+	
+	public void setActiveCompetition(Competition competition) {
+		activeCompetition = Optional.ofNullable(competition);
+	}
+	
+	public boolean hasActiveCompetition() {
+		return activeCompetition.isPresent();
+	}
+
+	public boolean isGUIrunning() {
+		return GUIrunning;
+	}
+
+	public boolean isLoadServer() {
+		return loadServer;
+	}
+
+	public boolean isLoadWeb() {
+		return loadWeb;
+	}
+
+	public int getServerPort() {
+		return serverPort;
+	}
+
+	public int getWebPort() {
+		return webPort;
 	}
 }

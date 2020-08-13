@@ -5,7 +5,7 @@ import com.loohp.tournament.TournamentServer;
 public class ConsoleTextOutput {
 	
 	public static void appendText(String string) {
-		if (TournamentServer.GUIrunning) {
+		if (TournamentServer.getInstance().isGUIrunning()) {
 			GUI.textOutput.setText(GUI.textOutput.getText() + string);
 			GUI.scrollPane.getVerticalScrollBar().setValue(GUI.scrollPane.getVerticalScrollBar().getMaximum());
 		}

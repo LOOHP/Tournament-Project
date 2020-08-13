@@ -5,7 +5,7 @@ import com.loohp.tournament.TournamentServer;
 public class ClientTextOutput {
 	
 	public static void setText(String string) {
-		if (TournamentServer.GUIrunning) {
+		if (TournamentServer.getInstance().isGUIrunning()) {
 			GUI.clientText.setText(string);
 		}
 	}

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.GUI.ConsoleTextOutput;
 import com.loohp.tournament.Server.Connection;
-import com.loohp.tournament.Server.Server;
 
 public class IO {
 	
@@ -18,19 +17,21 @@ public class IO {
 	private static HashMap<Long, Boolean> done = new HashMap<Long, Boolean>();
 	
 	public static void run() {
-		while (TournamentServer.in != null) {
+		while (TournamentServer.getInstance().in != null) {
 			try {
-				String cmd = TournamentServer.in.readLine();
+				String cmd = TournamentServer.getInstance().in.readLine();
 				input = Optional.of(CustomStringUtils.splitStringToArgs(cmd));
-				if (TournamentServer.stdout.equals(System.out)) {
+				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(cmd + "\n");
-					for (Connection sc : Server.clients) {
-						sc.send(cmd + "\n");
+					if (TournamentServer.getInstance().getServer() != null) {
+						for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
+							sc.send(cmd + "\n");
+						}
 					}
 				}
 				TimeUnit.MILLISECONDS.sleep(100);
 			} catch (IOException | InterruptedException e) {
-				TournamentServer.in = null;		
+				TournamentServer.getInstance().in = null;		
 			}
 		}
 	}
@@ -42,10 +43,12 @@ public class IO {
 		    @Override
 		    public void run() {
 				System.out.println(string);
-				if (TournamentServer.stdout.equals(System.out)) {
+				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(string + "\n");
-					for (Connection sc : Server.clients) {
-						sc.send(string + "\n");
+					if (TournamentServer.getInstance().getServer() != null) {
+						for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
+							sc.send(string + "\n");
+						}
 					}
 				}
 				done.put(unix, true);
@@ -64,9 +67,9 @@ public class IO {
 		    @Override
 		    public void run() {
 		    	System.out.printf(format, args);
-				if (TournamentServer.stdout.equals(System.out)) {
+				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(String.format(format, args));
-					for (Connection sc : Server.clients) {
+					for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
 						String formatted = String.format(format, args);
 						sc.send(formatted);
 					}
@@ -87,9 +90,9 @@ public class IO {
 		    @Override
 		    public void run() {
 		    	System.out.print(string);
-				if (TournamentServer.stdout.equals(System.out)) {
+				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(string);
-					for (Connection sc : Server.clients) {
+					for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
 						sc.send(string);
 					}
 				}

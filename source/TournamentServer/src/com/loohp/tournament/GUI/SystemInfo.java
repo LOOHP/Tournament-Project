@@ -9,7 +9,7 @@ import com.loohp.tournament.TournamentServer;
 public class SystemInfo {
 	
 	public static void printInfo() {
-		if (TournamentServer.GUIrunning) {
+		if (TournamentServer.getInstance().isGUIrunning()) {
 			while (true) {
 				Runtime runtime = Runtime.getRuntime();
 

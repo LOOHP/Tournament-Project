@@ -5,11 +5,11 @@ import com.loohp.tournament.Group.Group;
 
 public class GroupUtils {
 	public static int getMatchNumber(Group group) {
-		return TournamentServer.activeCompetition.get().getGroups().indexOf(group) + 1;
+		return TournamentServer.getInstance().getActiveCompetition().getGroups().indexOf(group) + 1;
 	}
 	
 	public static Group getHomeSideLastGroup(Group group) {
-		for (Group each : TournamentServer.activeCompetition.get().getGroups()) {
+		for (Group each : TournamentServer.getInstance().getActiveCompetition().getGroups()) {
 			if (each.getNextRoundGroup().isPresent()) {
 				if (each.getNextRoundGroup().get().equals(group)) {
 					if (each.getNextRoundSide().get() == 0) {
@@ -22,7 +22,7 @@ public class GroupUtils {
 	}
 	
 	public static Group getAwaySideLastGroup(Group group) {
-		for (Group each : TournamentServer.activeCompetition.get().getGroups()) {
+		for (Group each : TournamentServer.getInstance().getActiveCompetition().getGroups()) {
 			if (each.getNextRoundGroup().isPresent()) {
 				if (each.getNextRoundGroup().get().equals(group)) {
 					if (each.getNextRoundSide().get() == 1) {
