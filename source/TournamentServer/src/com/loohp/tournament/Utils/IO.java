@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.GUI.ConsoleTextOutput;
-import com.loohp.tournament.Server.Connection;
+import com.loohp.tournament.Packets.PacketOutConsole;
+import com.loohp.tournament.Server.ClientConnection;
 
 public class IO {
 	
@@ -24,8 +25,9 @@ public class IO {
 				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(cmd + "\n");
 					if (TournamentServer.getInstance().getServer() != null) {
-						for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
-							sc.send(cmd + "\n");
+						PacketOutConsole packet = new PacketOutConsole(cmd + "\n");
+						for (ClientConnection sc : TournamentServer.getInstance().getServer().getClients()) {
+							sc.send(packet);
 						}
 					}
 				}
@@ -46,8 +48,9 @@ public class IO {
 				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(string + "\n");
 					if (TournamentServer.getInstance().getServer() != null) {
-						for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
-							sc.send(string + "\n");
+						PacketOutConsole packet = new PacketOutConsole(string + "\n");
+						for (ClientConnection sc : TournamentServer.getInstance().getServer().getClients()) {
+							sc.send(packet);
 						}
 					}
 				}
@@ -69,9 +72,9 @@ public class IO {
 		    	System.out.printf(format, args);
 				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(String.format(format, args));
-					for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
-						String formatted = String.format(format, args);
-						sc.send(formatted);
+					PacketOutConsole packet = new PacketOutConsole(String.format(format, args));
+					for (ClientConnection sc : TournamentServer.getInstance().getServer().getClients()) {
+						sc.send(packet);
 					}
 				}
 				done.put(unix, true);
@@ -92,8 +95,9 @@ public class IO {
 		    	System.out.print(string);
 				if (TournamentServer.getInstance().stdout.equals(System.out)) {
 					ConsoleTextOutput.appendText(string);
-					for (Connection sc : TournamentServer.getInstance().getServer().getClients()) {
-						sc.send(string);
+					PacketOutConsole packet = new PacketOutConsole(string);
+					for (ClientConnection sc : TournamentServer.getInstance().getServer().getClients()) {
+						sc.send(packet);
 					}
 				}
 				done.put(unix, true);

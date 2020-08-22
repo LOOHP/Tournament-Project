@@ -1,6 +1,6 @@
 package com.loohp.tournamentclient.Utils;
 
-import com.loohp.tournamentclient.Lang;
+import com.loohp.tournamentclient.TournamentClient;
 
 public class RoundUtils {
 	
@@ -9,26 +9,26 @@ public class RoundUtils {
 		switch (playerCount) {
 		case 2:
 			str = "Final";
-			if (Lang.lang.containsKey("Rounds.Final")) {
-				str = Lang.lang.get("Rounds.Final").replace("%s", playerCount + "");
+			if (TournamentClient.getInstance().getLang().lang.containsKey("Rounds.Final")) {
+				str = TournamentClient.getInstance().getLang().lang.get("Rounds.Final").replace("%s", playerCount + "");
 			}
 			return str;
 		case 4:
 			str = "Semi-final";
-			if (Lang.lang.containsKey("Rounds.SemiFinal")) {
-				str = Lang.lang.get("Rounds.SemiFinal").replace("%s", playerCount + "");
+			if (TournamentClient.getInstance().getLang().lang.containsKey("Rounds.SemiFinal")) {
+				str = TournamentClient.getInstance().getLang().lang.get("Rounds.SemiFinal").replace("%s", playerCount + "");
 			}
 			return str;
 		case 8:
 			str = "Quater-final";
-			if (Lang.lang.containsKey("Rounds.QuaterFinal")) {
-				str = Lang.lang.get("Rounds.QuaterFinal").replace("%s", playerCount + "");
+			if (TournamentClient.getInstance().getLang().lang.containsKey("Rounds.QuaterFinal")) {
+				str = TournamentClient.getInstance().getLang().lang.get("Rounds.QuaterFinal").replace("%s", playerCount + "");
 			}
 			return str;
 		default:
 			str = "Round of " + playerCount;
-			if (Lang.lang.containsKey("Rounds.Others")) {
-				str = Lang.lang.get("Rounds.Others").replace("%s", playerCount + "");
+			if (TournamentClient.getInstance().getLang().lang.containsKey("Rounds.Others")) {
+				str = TournamentClient.getInstance().getLang().lang.get("Rounds.Others").replace("%s", playerCount + "");
 			}
 			return str;
 		}

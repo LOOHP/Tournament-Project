@@ -35,41 +35,52 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import com.loohp.tournamentclient.ComboBox.ListDropDownRound;
+import com.loohp.tournamentclient.Packets.PacketInCommand;
+import com.loohp.tournamentclient.Packets.PacketInGetReport;
+import com.loohp.tournamentclient.Packets.PacketInGetRoundNumber;
 import com.loohp.tournamentclient.Utils.TextOutputUtils;
 
 @SuppressWarnings("serial")
 public class TournamentClient extends JFrame {
-	
-	public static BufferedReader in;
-	public static boolean GUIrunning = true;
 
-	public static JPanel contentPane;
-	public static JTextField hostInput;
-	public static JTextField commandInput;
-	public static JButton execCommand;
-	public static JTextPane textOutput;
-	public static JButton hostConnect;
-	public static JLabel hostLabel;
-	public static JScrollPane scrollPane;
-	public static JLabel consoleLabel;
-	public static JButton openTournyChart;
-	public static JButton genReport;
-	public static JLabel actionLabel;
-	public static JButton listPlayers;
-	public static JButton listCurrent;
-	public static JButton listRound;
-	public static JComboBox<ListDropDownRound> listDropDownBox;
-	public static JButton demotebutton;
-	public static JButton promoteButton;
-	public static JTextField promoteText;
-	public static JTextField demoteText;
-	public static JButton listPlayerUUIDButton;
-	public static JButton findPlayerButton;
-	public static JTextField findPlayerText;
+	public static boolean GUIrunning = true;	
+	public static BufferedReader in;
+	public static TournamentClient instance;
+
+	private JPanel contentPane;
+	private JTextField hostInput;
+	private JTextField commandInput;
+	private JButton execCommand;
+	private JTextPane textOutput;
+	private JButton hostConnect;
+	private JLabel hostLabel;
+	private JScrollPane scrollPane;
+	private JLabel consoleLabel;
+	private JButton openTournyChart;
+	private JButton genReport;
+	private JLabel actionLabel;
+	private JButton listPlayers;
+	private JButton listCurrent;
+	private JButton listRound;
+	private JComboBox<ListDropDownRound> listDropDownBox;
+	private JButton demotebutton;
+	private JButton promoteButton;
+	private JTextField promoteText;
+	private JTextField demoteText;
+	private JButton listPlayerUUIDButton;
+	private JButton findPlayerButton;
+	private JTextField findPlayerText;
 	
-	public static List<String> history = new ArrayList<String>();
-	public static int currenthistory = 0;
-	public static JButton helpButton;
+	private List<String> history = new ArrayList<String>();
+	private int currenthistory = 0;
+	private JButton helpButton;
+	
+	private Client client;
+	private Lang lang;
+	
+	public static TournamentClient getInstance() {
+		return instance;
+	}
 
 	/**
 	 * Launch the application.
@@ -99,6 +110,7 @@ public class TournamentClient extends JFrame {
 		}
 		
 		Data.loadDatabase();
+		
 		if (GUIrunning) {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -116,6 +128,7 @@ public class TournamentClient extends JFrame {
 			String input = "";
 			String host = "localhost";
 			int port = 1720;
+			Client client = new Client();
 			do {
 				System.out.println("Enter the server host and port you want to connect: (Example: localhost:1720)");
 				System.out.print("> ");
@@ -129,7 +142,7 @@ public class TournamentClient extends JFrame {
 				} else {
 					host = input;
 				}
-			} while (!Client.connect(host, port));
+			} while (!client.connect(host, port));
 			Data.setLastServer(input);
 			System.out.println("Type \"end\" to exit the tournament client");
 			System.out.print("> ");
@@ -143,10 +156,11 @@ public class TournamentClient extends JFrame {
 								System.out.println("Exiting the tournament client");
 								System.exit(0);
 							} else {
-								Client.send(cmd);
+								client.send(new PacketInCommand(cmd));
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							System.out.println("Disconnected!" + e.getLocalizedMessage());
+							System.exit(0);
 						}
 			    	}
 			    }
@@ -159,6 +173,10 @@ public class TournamentClient extends JFrame {
 	 * Create the frame.
 	 */
 	public TournamentClient() {
+		instance = this;
+		client = new Client();
+		lang = new Lang();
+		
 		setTitle("Tournament System");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1198, 686);
@@ -194,7 +212,7 @@ public class TournamentClient extends JFrame {
 						host = hostInput.getText().substring(0, hostInput.getText().indexOf(":"));
 						port = Integer.parseInt(hostInput.getText().substring(hostInput.getText().indexOf(":") + 1));
 					}
-					if (Client.connect(host, port)) {
+					if (client.connect(host, port)) {
 						Data.setLastServer(hostInput.getText());
 					}
 				}
@@ -225,7 +243,7 @@ public class TournamentClient extends JFrame {
 					host = hostInput.getText().substring(0, hostInput.getText().indexOf(":"));
 					port = Integer.parseInt(hostInput.getText().substring(hostInput.getText().indexOf(":") + 1));
 				}
-				if (Client.connect(host, port)) {
+				if (client.connect(host, port)) {
 					Data.setLastServer(hostInput.getText());
 				}
 			}
@@ -268,7 +286,7 @@ public class TournamentClient extends JFrame {
 						history.add(cmd);
 						currenthistory = history.size();
 					}
-					Client.send(cmd);
+					client.send(new PacketInCommand(cmd));
 					commandInput.setText("");
 				} else if (e.getKeyCode() == 38) {
 					currenthistory--;
@@ -295,7 +313,7 @@ public class TournamentClient extends JFrame {
 			public void mouseReleased(MouseEvent e) {
 				int round = ((ListDropDownRound) listDropDownBox.getSelectedItem()).getId();
 				String cmd = "list round " + round;
-				Client.send(cmd);
+				client.send(new PacketInCommand(cmd));
 			}
 		});
 		
@@ -308,7 +326,7 @@ public class TournamentClient extends JFrame {
 					return;
 				}
 				String cmd = "promote " + promoteText.getText();
-				Client.send(cmd);
+				client.send(new PacketInCommand(cmd));
 				promoteText.setText("");
 			}
 		});
@@ -332,7 +350,7 @@ public class TournamentClient extends JFrame {
 						return;
 					}
 					String cmd = "promote " + promoteText.getText();
-					Client.send(cmd);
+					client.send(new PacketInCommand(cmd));
 					promoteText.setText("");
 				}
 			}
@@ -355,7 +373,7 @@ public class TournamentClient extends JFrame {
 					return;
 				}
 				String cmd = "unpromote " + demoteText.getText();
-				Client.send(cmd);
+				client.send(new PacketInCommand(cmd));
 				demoteText.setText("");
 			}
 		});
@@ -379,7 +397,7 @@ public class TournamentClient extends JFrame {
 						return;
 					}
 					String cmd = "unpromote " + demoteText.getText();
-					Client.send(cmd);
+					client.send(new PacketInCommand(cmd));
 					demoteText.setText("");
 				}
 			}
@@ -402,7 +420,7 @@ public class TournamentClient extends JFrame {
 					return;
 				}
 				String cmd = "find " + findPlayerText.getText();
-				Client.send(cmd);
+				client.send(new PacketInCommand(cmd));
 				findPlayerText.setText("");
 			}
 		});
@@ -425,7 +443,7 @@ public class TournamentClient extends JFrame {
 						return;
 					}
 					String cmd = "find " + findPlayerText.getText();
-					Client.send(cmd);
+					client.send(new PacketInCommand(cmd));
 					findPlayerText.setText("");
 				}
 			}
@@ -452,7 +470,7 @@ public class TournamentClient extends JFrame {
 		listDropDownBox.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				Client.send("function:getroundnum");
+				client.send(new PacketInGetRoundNumber());
 			}
 		});
 		GridBagConstraints gbc_listDropDownBox = new GridBagConstraints();
@@ -468,7 +486,7 @@ public class TournamentClient extends JFrame {
 		listCurrent.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Client.send("list current");
+				client.send(new PacketInCommand("list current"));
 			}
 		});
 		listCurrent.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -485,7 +503,7 @@ public class TournamentClient extends JFrame {
 		listPlayers.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Client.send("list players");
+				client.send(new PacketInCommand("list players"));
 			}
 		});
 		listPlayers.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -517,7 +535,7 @@ public class TournamentClient extends JFrame {
 		genReport.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Client.send("function:getreport");
+				client.send(new PacketInGetReport());
 			}
 		});
 		
@@ -526,7 +544,7 @@ public class TournamentClient extends JFrame {
 		listPlayerUUIDButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Client.send("list players --uuid");
+				client.send(new PacketInCommand("list players --uuid"));
 			}
 		});
 		listPlayerUUIDButton.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -550,14 +568,14 @@ public class TournamentClient extends JFrame {
 		openTournyChart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (Client.socket == null) {
+				if (client.socket == null) {
 					TextOutputUtils.appendText("[Error] Not connected to any tournament server!", true);
 					return;
 				}
-				if (!Client.socket.isClosed()) {
+				if (!client.socket.isClosed()) {
 					if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 					    try {
-							Desktop.getDesktop().browse(new URI("http://" + Client.host + ":8080"));
+							Desktop.getDesktop().browse(new URI("http://" + client.host + ":8080"));
 							return;
 						} catch (IOException | URISyntaxException e1) {
 							TextOutputUtils.appendText("Unable to open browser! You can go to http://<host>:8080 manually", true);
@@ -571,12 +589,12 @@ public class TournamentClient extends JFrame {
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				if (Client.socket == null) {
+				if (client.socket == null) {
 					openTournyChart.setToolTipText("View the tournament chart.");
 					return;
 				}
-				if (Client.socket.isConnected()) {
-					openTournyChart.setToolTipText("View the tournament chart. Alternatively, you can go to http://" + Client.host + ":8080 in a browser");
+				if (client.socket.isConnected()) {
+					openTournyChart.setToolTipText("View the tournament chart. Alternatively, you can go to http://" + client.host + ":8080 in a browser");
 				} else {
 					openTournyChart.setToolTipText("View the tournament chart.");
 				}
@@ -596,7 +614,7 @@ public class TournamentClient extends JFrame {
 		helpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Client.send("help");
+				client.send(new PacketInCommand("help"));
 			}
 		});
 		GridBagConstraints gbc_helpButton = new GridBagConstraints();
@@ -624,7 +642,7 @@ public class TournamentClient extends JFrame {
 					history.add(cmd);
 					currenthistory = history.size();
 				}
-				Client.send(cmd);
+				client.send(new PacketInCommand(cmd));
 				commandInput.setText("");
 			}
 		});
@@ -634,6 +652,126 @@ public class TournamentClient extends JFrame {
 		gbc_execCommand.gridx = 7;
 		gbc_execCommand.gridy = 19;
 		contentPane.add(execCommand, gbc_execCommand);
+	}
+	
+	public static boolean isGUIrunning() {
+		return GUIrunning;
+	}
+
+	public static BufferedReader getIn() {
+		return in;
+	}
+
+	public JPanel getContentPane() {
+		return contentPane;
+	}
+
+	public JTextField getHostInput() {
+		return hostInput;
+	}
+
+	public JTextField getCommandInput() {
+		return commandInput;
+	}
+
+	public JButton getExecCommand() {
+		return execCommand;
+	}
+
+	public JTextPane getTextOutput() {
+		return textOutput;
+	}
+
+	public JButton getHostConnect() {
+		return hostConnect;
+	}
+
+	public JLabel getHostLabel() {
+		return hostLabel;
+	}
+
+	public JScrollPane getScrollPane() {
+		return scrollPane;
+	}
+
+	public JLabel getConsoleLabel() {
+		return consoleLabel;
+	}
+
+	public JButton getOpenTournyChart() {
+		return openTournyChart;
+	}
+
+	public JButton getGenReport() {
+		return genReport;
+	}
+
+	public JLabel getActionLabel() {
+		return actionLabel;
+	}
+
+	public JButton getListPlayers() {
+		return listPlayers;
+	}
+
+	public JButton getListCurrent() {
+		return listCurrent;
+	}
+
+	public JButton getListRound() {
+		return listRound;
+	}
+
+	public JComboBox<ListDropDownRound> getListDropDownBox() {
+		return listDropDownBox;
+	}
+
+	public JButton getDemotebutton() {
+		return demotebutton;
+	}
+
+	public JButton getPromoteButton() {
+		return promoteButton;
+	}
+
+	public JTextField getPromoteText() {
+		return promoteText;
+	}
+
+	public JTextField getDemoteText() {
+		return demoteText;
+	}
+
+	public JButton getListPlayerUUIDButton() {
+		return listPlayerUUIDButton;
+	}
+
+	public JButton getFindPlayerButton() {
+		return findPlayerButton;
+	}
+
+	public JTextField getFindPlayerText() {
+		return findPlayerText;
+	}
+
+	public List<String> getHistory() {
+		return history;
+	}
+
+	public int getCurrenthistory() {
+		return currenthistory;
+	}
+
+	public JButton getHelpButton() {
+		return helpButton;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+	
+	public Lang getLang() {
+		return lang;
 	}
 
 }

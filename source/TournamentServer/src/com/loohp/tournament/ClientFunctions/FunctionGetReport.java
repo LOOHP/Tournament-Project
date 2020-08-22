@@ -5,15 +5,16 @@ import java.util.List;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Competition.Competition;
 import com.loohp.tournament.Group.Group;
+import com.loohp.tournament.Packets.PacketOutReportNormal;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
-import com.loohp.tournament.Server.Connection;
+import com.loohp.tournament.Server.ClientConnection;
 import com.loohp.tournament.Utils.GroupUtils;
 import com.loohp.tournament.Utils.RoundUtils;
 
 public class FunctionGetReport {
 	
-	public static void GenAndSendReport(Connection client) {
+	public static void GenAndSendReport(ClientConnection client) {
 		
 		String output = "";
 		
@@ -156,7 +157,7 @@ public class FunctionGetReport {
 		output = output + TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.FinalResults") + "\n";
 		output = output + TournamentServer.getInstance().getLang().get("Functions.ReportGenerator.Ongoing") + "\n";
 		
-		client.send("function:getreport=" + output);
+		client.send(new PacketOutReportNormal(output));
 	}
 
 }

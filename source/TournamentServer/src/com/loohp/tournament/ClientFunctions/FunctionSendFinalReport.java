@@ -5,9 +5,10 @@ import java.util.List;
 import com.loohp.tournament.TournamentServer;
 import com.loohp.tournament.Competition.Competition;
 import com.loohp.tournament.Group.Group;
+import com.loohp.tournament.Packets.PacketOutReportFinish;
 import com.loohp.tournament.Player.Player;
 import com.loohp.tournament.Round.Round;
-import com.loohp.tournament.Server.Connection;
+import com.loohp.tournament.Server.ClientConnection;
 import com.loohp.tournament.Utils.GroupUtils;
 import com.loohp.tournament.Utils.RoundUtils;
 
@@ -15,9 +16,9 @@ public class FunctionSendFinalReport {
 	
 	public static void sendReports(Player first, Player runner, Player runner2, Player runner3) {
 		String report = getReport(first, runner, runner2, runner3);
-		for (Connection client : TournamentServer.getInstance().getServer().getClients()) {
-			String out = "function:finishreport=" + report;
-			client.send(out);
+		PacketOutReportFinish packet = new PacketOutReportFinish(report);
+		for (ClientConnection client : TournamentServer.getInstance().getServer().getClients()) {
+			client.send(packet);
 		}
 	}
 	

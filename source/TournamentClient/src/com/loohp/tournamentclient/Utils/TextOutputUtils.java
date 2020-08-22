@@ -6,8 +6,8 @@ public class TextOutputUtils {
 	
 	public static void appendText(String string) {
 		if (TournamentClient.GUIrunning) {
-			TournamentClient.textOutput.setText(TournamentClient.textOutput.getText() + string);
-			TournamentClient.scrollPane.getVerticalScrollBar().setValue(TournamentClient.scrollPane.getVerticalScrollBar().getMaximum());
+			TournamentClient.getInstance().getTextOutput().setText(TournamentClient.getInstance().getTextOutput().getText() + string);
+			TournamentClient.getInstance().getScrollPane().getVerticalScrollBar().setValue(TournamentClient.getInstance().getScrollPane().getVerticalScrollBar().getMaximum());
 		}
 		System.out.print(string);
 	}

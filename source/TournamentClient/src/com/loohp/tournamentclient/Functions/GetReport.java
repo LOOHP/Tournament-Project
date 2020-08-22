@@ -13,7 +13,7 @@ import com.loohp.tournamentclient.Utils.TextOutputUtils;
 
 public class GetReport {
 	
-	public static void getReport(String in) {
+	public static void getReport(String report) {
 		
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -30,7 +30,6 @@ public class GetReport {
 				}
 		    }
 		    
-		    String report = in.substring(in.indexOf("function:getreport=") + 19);
 		    try {
 				PrintWriter writer = new PrintWriter(file);
 				writer.write(report);

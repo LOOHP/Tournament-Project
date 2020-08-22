@@ -6,32 +6,40 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 import com.loohp.tournamentclient.ComboBox.ListDropDownRound;
 import com.loohp.tournamentclient.Functions.FinishReport;
 import com.loohp.tournamentclient.Functions.GetReport;
-import com.loohp.tournamentclient.Utils.ArraysUtils;
+import com.loohp.tournamentclient.Packets.PacketIn;
+import com.loohp.tournamentclient.Packets.PacketOutConsole;
+import com.loohp.tournamentclient.Packets.PacketOutLanguage;
+import com.loohp.tournamentclient.Packets.PacketOutReportFinish;
+import com.loohp.tournamentclient.Packets.PacketOutReportNormal;
+import com.loohp.tournamentclient.Packets.PacketOutRoundNumber;
 import com.loohp.tournamentclient.Utils.RoundUtils;
 import com.loohp.tournamentclient.Utils.TextOutputUtils;
 
 public class Client {
 	
-	public static Socket socket;
-	public static String host;
-	public static int port;
+	public Socket socket;
+	public String host;
+	public int port;
+	private DataInputStream in;		
+	private DataOutputStream out;
 	
-	public static boolean connect(String host, int port) {
+	public boolean connect(String host, int port) {
 		try {
 			if (socket != null) {
 				if (socket.isConnected()) {
 					socket.close();
 				}
 			}
-			Client.host = host;
-			Client.port = port;
+			this.host = host;
+			this.port = port;
 			socket = new Socket(host, port);
 			TextOutputUtils.appendText("Connected to [" + host + ":" + port + "]", true);
+			in = new DataInputStream(socket.getInputStream());
+			out = new DataOutputStream(socket.getOutputStream());
 			Thread t1 = new Thread(new Runnable() {
 			    @Override
 			    public void run() {
@@ -46,7 +54,7 @@ public class Client {
 		return true;
 	}
 	
-	public static void send(String args) {
+	public void send(PacketIn packet) {
 		if (socket == null) {
 			TextOutputUtils.appendText("[Error] Not connected to any tournament server!", true);
 			return;
@@ -54,16 +62,10 @@ public class Client {
 			connect(host, port);
 		}
 		try {
-			args = "<Packet>" + args + "</Packet>";
-			byte[] byteArray = args.getBytes(StandardCharsets.UTF_8);
-			byte[][] splitArray = ArraysUtils.splitArrayBytes(byteArray, 32768);
-			
-			for (byte[] each : splitArray) {
-				DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
-				dOut.writeInt(each.length);
-				dOut.write(each);
-				dOut.flush();
-			}
+			byte[] bytes = packet.getBytes();
+			out.writeInt(bytes.length);
+			out.write(bytes);
+			out.flush();
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
@@ -71,54 +73,45 @@ public class Client {
 		}
 	}
 	
-	public static void recieve() {
+	public void recieve() {
 		try {
-			boolean done = false;
-			String in = "";
-			byte[] byteArray = new byte[0];
-			while (!done) {
-				DataInputStream dIn = new DataInputStream(socket.getInputStream());		
-				byte[] each = new byte[dIn.readInt()];
-				dIn.readFully(each);
-				byteArray = ArraysUtils.joinArrayBytes(byteArray, each);
-				in = new String(byteArray, StandardCharsets.UTF_8);
-				if (in.startsWith("<Packet>") && in.endsWith("</Packet>")) {
-					done = true;
+			int size = in.readInt();
+			int packetId = in.readByte();
+			
+			if (PacketOutConsole.getPacketId() == packetId) {
+				PacketOutConsole packet = new PacketOutConsole(in);
+				TextOutputUtils.appendText(packet.getText());
+			} else if (PacketOutLanguage.getPacketId() == packetId) {
+				PacketOutLanguage packet = new PacketOutLanguage(in);
+				if (TournamentClient.GUIrunning) {
+					TournamentClient.getInstance().getLang().load(packet.getLanguage());
 				}
-			}
-			
-			in = in.replaceAll("^<Packet>", "");
-			in = in.replaceAll("<\\/Packet>$","");
-			
-			if (in.startsWith("function:")) {
-				if (in.startsWith("function:getreport")) {
-					GetReport.getReport(in);
-				} else if (in.startsWith("function:finishreport")) {
-					FinishReport.save(in);
-				} else if (in.startsWith("function:getroundnum")) {
-					if (TournamentClient.GUIrunning) {
-						int num = Integer.parseInt(in.substring(in.indexOf("function:getroundnum=") + 21));
-						TournamentClient.listDropDownBox.removeAllItems();
-						int u = num - 1;
-						for (int i = 0; i < num; i++) {
-							ListDropDownRound round = new ListDropDownRound(i, RoundUtils.getRoundNameFromRoundNumber(u));
-							TournamentClient.listDropDownBox.addItem(round);
-							u--;
-							TournamentClient.listDropDownBox.setSelectedIndex(0);
-						}
-					}
-				} else if (in.startsWith("function:serverlang")) {
-					if (TournamentClient.GUIrunning) {
-						Lang.load(in);
+			} else if (PacketOutReportFinish.getPacketId() == packetId) {
+				PacketOutReportFinish packet = new PacketOutReportFinish(in);
+				FinishReport.save(packet.getText());
+			} else if (PacketOutReportNormal.getPacketId() == packetId) {
+				PacketOutReportNormal packet = new PacketOutReportNormal(in);
+				GetReport.getReport(packet.getText());
+			} else if (PacketOutRoundNumber.getPacketId() == packetId) {
+				PacketOutRoundNumber packet = new PacketOutRoundNumber(in);
+				if (TournamentClient.GUIrunning) {
+					int num = packet.getRound();
+					TournamentClient.getInstance().getListDropDownBox().removeAllItems();
+					int u = num - 1;
+					for (int i = 0; i < num; i++) {
+						ListDropDownRound round = new ListDropDownRound(i, RoundUtils.getRoundNameFromRoundNumber(u));
+						TournamentClient.getInstance().getListDropDownBox().addItem(round);
+						u--;
+						TournamentClient.getInstance().getListDropDownBox().setSelectedIndex(0);
 					}
 				}
 			} else {
-				TextOutputUtils.appendText(in);
+				in.skipBytes(size - 1);
 			}
 			recieve();
 		} catch (Exception e) {
-			TextOutputUtils.appendText("Disconnected from [" + host + ":" + port + "]", true);
-			TextOutputUtils.appendText(e.getLocalizedMessage(), true);
+			TextOutputUtils.appendText("\nDisconnected from [" + host + ":" + port + "]", true);
+			TextOutputUtils.appendText("Reason: " + e.getLocalizedMessage(), true);
 		}
 	}
 

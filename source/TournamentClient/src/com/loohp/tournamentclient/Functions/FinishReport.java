@@ -10,16 +10,16 @@ import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import com.loohp.tournamentclient.Lang;
+import com.loohp.tournamentclient.TournamentClient;
 import com.loohp.tournamentclient.Utils.TextOutputUtils;
 
 public class FinishReport {
 	
-	public static void save(String in) {
+	public static void save(String report) {
 		
 		String str = "The tournament has finished! Do you want to save a report?";
-		if (Lang.lang.containsKey("FinishReport.Text")) {
-			str = Lang.lang.get("FinishReport.Text");
+		if (TournamentClient.getInstance().getLang().lang.containsKey("FinishReport.Text")) {
+			str = TournamentClient.getInstance().getLang().lang.get("FinishReport.Text");
 		}
 		int dialogResult = JOptionPane.showConfirmDialog(null, str);
 		if(dialogResult == JOptionPane.YES_OPTION){
@@ -39,7 +39,6 @@ public class FinishReport {
 					}
 			    }
 			    
-			    String report = in.substring(in.indexOf("function:finishreport=") + 22);
 			    try {
 					PrintWriter writer = new PrintWriter(file);
 					writer.write(report);

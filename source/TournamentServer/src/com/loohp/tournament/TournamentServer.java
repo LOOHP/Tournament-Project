@@ -27,7 +27,7 @@ import com.loohp.tournament.Competition.Competition;
 import com.loohp.tournament.Database.Database;
 import com.loohp.tournament.GUI.GUI;
 import com.loohp.tournament.Player.Player;
-import com.loohp.tournament.Server.Server;
+import com.loohp.tournament.Server.ServerConnection;
 import com.loohp.tournament.Utils.IO;
 import com.loohp.tournament.Utils.NetworkUtils;
 import com.loohp.tournament.Web.Web;
@@ -62,7 +62,7 @@ public class TournamentServer {
 	private int webPort = 8080;
 	
 	private Lang lang;
-	private Server server;
+	private ServerConnection server;
 
 	private CommandsManager commandsManager;
 	
@@ -165,7 +165,7 @@ public class TournamentServer {
 				IO.writeLn("");
 				Exit.exit(1);
 			}
-			server = new Server(serverPort);
+			server = new ServerConnection(serverPort);
 		}
 		
 		if (loadWeb) {
@@ -254,7 +254,7 @@ public class TournamentServer {
 		return commandsManager;
 	}
 	
-	public Server getServer() {
+	public ServerConnection getServer() {
 		return server;
 	}
 

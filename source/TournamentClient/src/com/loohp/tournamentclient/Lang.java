@@ -7,160 +7,155 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import com.loohp.tournamentclient.Utils.CustomHashMapUtils;
-
 public class Lang {
 	
-	public static HashMap<String, String> lang = new HashMap<String, String>();
+	public HashMap<String, String> lang = new HashMap<String, String>();
 	
-	@SuppressWarnings("unchecked")
-	public static void load(String in) {
+	public void load(HashMap<String, String> lang) {
 		
-		String hash = in.substring(in.indexOf("function:serverlang=") + 20);
+		TournamentClient tour = TournamentClient.getInstance();
 		
-		if (((HashMap<String, String>) CustomHashMapUtils.deserialize(hash)).containsKey("Title")) {
-			Window window = SwingUtilities.getWindowAncestor(TournamentClient.hostLabel);
+		if (lang.containsKey("Title")) {
+			Window window = SwingUtilities.getWindowAncestor(tour.getHostLabel());
 			JFrame frame = (JFrame) window;
-			frame.setTitle(((HashMap<String, String>) CustomHashMapUtils.deserialize(hash)).get("Title").replace("%s", Client.host));
+			frame.setTitle(lang.get("Title").replace("%s", tour.getClient().host));
 		}
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to load language pack provided by the server?");
 		
 		if(dialogResult == JOptionPane.YES_OPTION){
-		
-			lang = (HashMap<String, String>) CustomHashMapUtils.deserialize(hash);
 			
 			if (lang.containsKey("HostLabel.Text")) {
-				TournamentClient.hostLabel.setText(lang.get("HostLabel.Text"));
+				tour.getHostLabel().setText(lang.get("HostLabel.Text"));
 			}
 			if (lang.containsKey("HostLabel.ToolTip")) {
-				TournamentClient.hostLabel.setToolTipText(lang.get("HostLabel.ToolTip"));
+				tour.getHostLabel().setToolTipText(lang.get("HostLabel.ToolTip"));
 			}
 			
 			if (lang.containsKey("HostText.Text")) {
-				TournamentClient.hostInput.setText(lang.get("HostText.Text"));
+				tour.getHostInput().setText(lang.get("HostText.Text"));
 			}
 			if (lang.containsKey("HostText.ToolTip")) {
-				TournamentClient.hostInput.setToolTipText(lang.get("HostText.ToolTip"));
+				tour.getHostInput().setToolTipText(lang.get("HostText.ToolTip"));
 			}
 			
 			if (lang.containsKey("ConnectButton.Text")) {
-				TournamentClient.hostConnect.setText(lang.get("ConnectButton.Text"));
+				tour.getHostConnect().setText(lang.get("ConnectButton.Text"));
 			}
 			if (lang.containsKey("ConnectButton.ToolTip")) {
-				TournamentClient.hostConnect.setToolTipText(lang.get("ConnectButton.ToolTip"));
+				tour.getHostConnect().setToolTipText(lang.get("ConnectButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("ActionsLabel.Text")) {
-				TournamentClient.actionLabel.setText(lang.get("ActionsLabel.Text"));
+				tour.getActionLabel().setText(lang.get("ActionsLabel.Text"));
 			}
 			if (lang.containsKey("ActionsLabel.ToolTip")) {
-				TournamentClient.actionLabel.setToolTipText(lang.get("ActionsLabel.ToolTip"));
+				tour.getActionLabel().setToolTipText(lang.get("ActionsLabel.ToolTip"));
 			}
 			
 			if (lang.containsKey("PromoteButton.Text")) {
-				TournamentClient.promoteButton.setText(lang.get("PromoteButton.Text"));
+				tour.getPromoteButton().setText(lang.get("PromoteButton.Text"));
 			}
 			if (lang.containsKey("PromoteButton.ToolTip")) {
-				TournamentClient.promoteButton.setToolTipText(lang.get("PromoteButton.ToolTip"));
+				tour.getPromoteButton().setToolTipText(lang.get("PromoteButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("PromoteText.Text")) {
-				TournamentClient.promoteText.setText(lang.get("PromoteText.Text"));
+				tour.getPromoteText().setText(lang.get("PromoteText.Text"));
 			}
 			if (lang.containsKey("PromoteText.ToolTip")) {
-				TournamentClient.promoteText.setToolTipText(lang.get("PromoteText.ToolTip"));
+				tour.getPromoteText().setToolTipText(lang.get("PromoteText.ToolTip"));
 			}
 			
 			if (lang.containsKey("DemoteButton.Text")) {
-				TournamentClient.demotebutton.setText(lang.get("DemoteButton.Text"));
+				tour.getDemotebutton().setText(lang.get("DemoteButton.Text"));
 			}
 			if (lang.containsKey("DemoteButton.ToolTip")) {
-				TournamentClient.demotebutton.setToolTipText(lang.get("DemoteButton.ToolTip"));
+				tour.getDemotebutton().setToolTipText(lang.get("DemoteButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("DemoteText.Text")) {
-				TournamentClient.demoteText.setText(lang.get("DemoteText.Text"));
+				tour.getDemoteText().setText(lang.get("DemoteText.Text"));
 			}
 			if (lang.containsKey("DemoteText.ToolTip")) {
-				TournamentClient.demoteText.setToolTipText(lang.get("DemoteText.ToolTip"));
+				tour.getDemoteText().setToolTipText(lang.get("DemoteText.ToolTip"));
 			}
 			
 			if (lang.containsKey("FindPlayerButton.Text")) {
-				TournamentClient.findPlayerButton.setText(lang.get("FindPlayerButton.Text"));
+				tour.getFindPlayerButton().setText(lang.get("FindPlayerButton.Text"));
 			}
 			if (lang.containsKey("FindPlayerButton.ToolTip")) {
-				TournamentClient.findPlayerButton.setToolTipText(lang.get("FindPlayerButton.ToolTip"));
+				tour.getFindPlayerButton().setToolTipText(lang.get("FindPlayerButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("FindPlayerText.Text")) {
-				TournamentClient.findPlayerText.setText(lang.get("FindPlayerText.Text"));
+				tour.getFindPlayerText().setText(lang.get("FindPlayerText.Text"));
 			}
 			if (lang.containsKey("FindPlayerText.ToolTip")) {
-				TournamentClient.findPlayerText.setToolTipText(lang.get("FindPlayerText.ToolTip"));
+				tour.getFindPlayerText().setToolTipText(lang.get("FindPlayerText.ToolTip"));
 			}
 			
 			if (lang.containsKey("ListRoundButton.Text")) {
-				TournamentClient.listRound.setText(lang.get("ListRoundButton.Text"));
+				tour.getListRound().setText(lang.get("ListRoundButton.Text"));
 			}
 			if (lang.containsKey("ListRoundButton.ToolTip")) {
-				TournamentClient.listRound.setToolTipText(lang.get("ListRoundButton.ToolTip"));
+				tour.getListRound().setToolTipText(lang.get("ListRoundButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("ListCurrentRoundButton.Text")) {
-				TournamentClient.listCurrent.setText(lang.get("ListCurrentRoundButton.Text"));
+				tour.getListCurrent().setText(lang.get("ListCurrentRoundButton.Text"));
 			}
 			if (lang.containsKey("ListCurrentRoundButton.ToolTip")) {
-				TournamentClient.listCurrent.setToolTipText(lang.get("ListCurrentRoundButton.ToolTip"));
+				tour.getListCurrent().setToolTipText(lang.get("ListCurrentRoundButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("ListPlayersButton.Text")) {
-				TournamentClient.listPlayers.setText(lang.get("ListPlayersButton.Text"));
+				tour.getListPlayers().setText(lang.get("ListPlayersButton.Text"));
 			}
 			if (lang.containsKey("ListPlayersButton.ToolTip")) {
-				TournamentClient.listPlayers.setToolTipText(lang.get("ListPlayersButton.ToolTip"));
+				tour.getListPlayers().setToolTipText(lang.get("ListPlayersButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("ListUUIDButton.Text")) {
-				TournamentClient.listPlayerUUIDButton.setText(lang.get("ListUUIDButton.Text"));
+				tour.getListPlayerUUIDButton().setText(lang.get("ListUUIDButton.Text"));
 			}
 			if (lang.containsKey("ListUUIDButton.ToolTip")) {
-				TournamentClient.listPlayerUUIDButton.setToolTipText(lang.get("ListUUIDButton.ToolTip"));
+				tour.getListPlayerUUIDButton().setToolTipText(lang.get("ListUUIDButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("GenerateReportButton.Text")) {
-				TournamentClient.genReport.setText(lang.get("GenerateReportButton.Text"));
+				tour.getGenReport().setText(lang.get("GenerateReportButton.Text"));
 			}
 			if (lang.containsKey("GenerateReportButton.ToolTip")) {
-				TournamentClient.genReport.setToolTipText(lang.get("GenerateReportButton.ToolTip"));
+				tour.getGenReport().setToolTipText(lang.get("GenerateReportButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("ViewTournamentChartButton.Text")) {
-				TournamentClient.openTournyChart.setText(lang.get("ViewTournamentChartButton.Text"));
+				tour.getOpenTournyChart().setText(lang.get("ViewTournamentChartButton.Text"));
 			}
 			if (lang.containsKey("ViewTournamentChartButton.ToolTip")) {
-				TournamentClient.openTournyChart.setToolTipText(lang.get("ViewTournamentChartButton.ToolTip"));
+				tour.getOpenTournyChart().setToolTipText(lang.get("ViewTournamentChartButton.ToolTip"));
 			}
 			
 			if (lang.containsKey("OutputLabel.Text")) {
-				TournamentClient.consoleLabel.setText(lang.get("OutputLabel.Text"));
+				tour.getConsoleLabel().setText(lang.get("OutputLabel.Text"));
 			}
 			if (lang.containsKey("OutputLabel.ToolTip")) {
-				TournamentClient.consoleLabel.setToolTipText(lang.get("OutputLabel.ToolTip"));
+				tour.getConsoleLabel().setToolTipText(lang.get("OutputLabel.ToolTip"));
 			}
 			
 			if (lang.containsKey("CommandText.Text")) {
-				TournamentClient.commandInput.setText(lang.get("CommandText.Text"));
+				tour.getCommandInput().setText(lang.get("CommandText.Text"));
 			}
 			if (lang.containsKey("CommandText.ToolTip")) {
-				TournamentClient.commandInput.setToolTipText(lang.get("CommandText.ToolTip"));
+				tour.getCommandInput().setToolTipText(lang.get("CommandText.ToolTip"));
 			}		
 			
 			if (lang.containsKey("CommandButton.Text")) {
-				TournamentClient.execCommand.setText(lang.get("CommandButton.Text"));
+				tour.getExecCommand().setText(lang.get("CommandButton.Text"));
 			}
 			if (lang.containsKey("CommandButton.ToolTip")) {
-				TournamentClient.execCommand.setToolTipText(lang.get("CommandButton.ToolTip"));
+				tour.getExecCommand().setToolTipText(lang.get("CommandButton.ToolTip"));
 			}
 		}
 	}
