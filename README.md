@@ -53,3 +53,7 @@ To connect to a tournament server through the client, simply enter the **host an
 
 ## Using the help command
 Simply by running `help` will list all the commands with its description, entering each command with the flag `--help` or incorrectly will display its usage.
+
+***
+## Protocol Specifications
+[See the wiki page](https://github.com/LOOHP/TournamentProject/wiki/Protocol)
