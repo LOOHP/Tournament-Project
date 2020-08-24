@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-import com.loohp.tournament.Utils.CustomHashMapUtils;
 import com.loohp.tournament.Utils.DataTypeIO;
 
 public class PacketOutLanguage extends PacketOut {
@@ -32,7 +31,7 @@ public class PacketOutLanguage extends PacketOut {
 		
 		DataOutputStream output = new DataOutputStream(buffer);
 		output.writeByte(packetId);
-		DataTypeIO.writeString(output, CustomHashMapUtils.serialize(language), StandardCharsets.UTF_8);
+		DataTypeIO.writeStringMapping(output, language, StandardCharsets.UTF_8);
 		
 		return buffer.toByteArray();
 	}

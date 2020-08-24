@@ -2,6 +2,7 @@ package com.loohp.tournamentclient;
 
 import java.awt.Window;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -9,9 +10,11 @@ import javax.swing.SwingUtilities;
 
 public class Lang {
 	
-	public HashMap<String, String> lang = new HashMap<String, String>();
+	public Map<String, String> lang = new HashMap<String, String>();
 	
-	public void load(HashMap<String, String> lang) {
+	public void load(Map<String, String> mapping) {
+		
+		lang = mapping;
 		
 		TournamentClient tour = TournamentClient.getInstance();
 		
@@ -23,7 +26,7 @@ public class Lang {
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to load language pack provided by the server?");
 		
-		if(dialogResult == JOptionPane.YES_OPTION){
+		if (dialogResult == JOptionPane.YES_OPTION){
 			
 			if (lang.containsKey("HostLabel.Text")) {
 				tour.getHostLabel().setText(lang.get("HostLabel.Text"));

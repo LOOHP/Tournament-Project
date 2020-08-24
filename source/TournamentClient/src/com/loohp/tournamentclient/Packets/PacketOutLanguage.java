@@ -3,8 +3,8 @@ package com.loohp.tournamentclient.Packets;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
-import com.loohp.tournamentclient.Utils.CustomHashMapUtils;
 import com.loohp.tournamentclient.Utils.DataTypeIO;
 
 public class PacketOutLanguage extends PacketOut {
@@ -17,18 +17,17 @@ public class PacketOutLanguage extends PacketOut {
 	
 	private PacketOutLanguage() {}
 	
-	private HashMap<String, String> language;
+	private Map<String, String> language;
 	
 	public PacketOutLanguage(HashMap<String, String> language) {
 		this.language = language;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public PacketOutLanguage(DataInputStream input) throws IOException {
-		language = (HashMap<String, String>) CustomHashMapUtils.deserialize(DataTypeIO.readString(input));
+		language = DataTypeIO.readStringMapping(input);
 	}
 	
-	public HashMap<String, String> getLanguage() {
+	public Map<String, String> getLanguage() {
 		return language;
 	}
 
