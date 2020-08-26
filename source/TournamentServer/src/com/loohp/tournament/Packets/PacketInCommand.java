@@ -2,6 +2,7 @@ package com.loohp.tournament.Packets;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.loohp.tournament.Utils.DataTypeIO;
 
@@ -22,7 +23,7 @@ public class PacketInCommand extends PacketIn {
 	}
 	
 	public PacketInCommand(DataInputStream in) throws IOException {
-		this.text = DataTypeIO.readString(in);
+		this.text = DataTypeIO.readString(in, StandardCharsets.UTF_8);
 	}
 	
 	public String getText() {

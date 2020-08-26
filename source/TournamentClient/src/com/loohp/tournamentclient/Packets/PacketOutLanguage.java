@@ -2,6 +2,7 @@ package com.loohp.tournamentclient.Packets;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class PacketOutLanguage extends PacketOut {
 	}
 	
 	public PacketOutLanguage(DataInputStream input) throws IOException {
-		language = DataTypeIO.readStringMapping(input);
+		language = DataTypeIO.readStringMapping(input, StandardCharsets.UTF_8);
 	}
 	
 	public Map<String, String> getLanguage() {

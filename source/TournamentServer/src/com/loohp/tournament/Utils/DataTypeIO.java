@@ -18,18 +18,18 @@ public class DataTypeIO {
 		}
 	}
 	
-	public static Map<String, String> readStringMapping(DataInputStream in) throws IOException {
+	public static Map<String, String> readStringMapping(DataInputStream in, Charset charset) throws IOException {
 		int size = in.readInt();
 		Map<String, String> mapping = new LinkedHashMap<>();
 		for (int i = 0; i < size; i++) {
-			String key = readString(in);
-			String value = readString(in);
+			String key = readString(in, charset);
+			String value = readString(in, charset);
 			mapping.put(key, value);
 		}
 		return mapping;
 	}
 	
-	public static String readString(DataInputStream in) throws IOException {
+	public static String readString(DataInputStream in, Charset charset) throws IOException {
 		int length = in.readInt();
 
 	    if (length == -1) {
@@ -38,7 +38,7 @@ public class DataTypeIO {
 
 	    byte[] b = new byte[length];
 	    in.readFully(b);
-	    return new String(b);
+	    return new String(b, charset);
 	}
 	
 	public static int getStringLength(String string, Charset charset) throws IOException {
